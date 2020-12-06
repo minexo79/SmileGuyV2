@@ -31,7 +31,7 @@ class Sokoban():
             x=[ra.randint(1,high-2),ra.randint(1,width-2)]
             if  x not in repeat :
                 repeat.append(x)
-            if len(repeat)==2+number:
+            if len(repeat)==2+number :
                 break
 
         for i in range(len(repeat)) :
@@ -96,10 +96,10 @@ class Sokoban():
                     self.player[1]+=1
     def mapprint(self):
         map2=copy.deepcopy(self.map1)
-        map2[self.player[0]][self.player[1]]="🌝"#人物
-        map2[self.end[0]][self.end[1]]="🟨"#終點
+        map2[self.player[0]][self.player[1]]="🌝"#player
+        map2[self.end[0]][self.end[1]]="🟨"#end
         for i in self.box :
-            map2[i[0]][i[1]]="🔳"#箱子
+            map2[i[0]][i[1]]="🔳"#box
         if not len(self.box):return ("\n".join(["".join(i) for i in map2]),True)
         else :return ("\n".join(["".join(i) for i in map2]),False)
         
@@ -159,11 +159,8 @@ class tinygame(commands.Cog):
         text,_ = ww.mapprint()
         embed = discord.Embed(title=f"sokoban 推箱子\n玩家: {ctx.author}",description=f"```\n{text}\n```",colour=self.bot.default_colour)
         message = await ctx.send(embed=embed)
-        await message.add_reaction("◀")
-        await message.add_reaction("🔼")
-        await message.add_reaction("🔽")
-        await message.add_reaction("▶")
-        await message.add_reaction("⏹")
+        for i in ["◀","🔼","🔽","▶","⏹"] :
+            await message.add_reaction(i)
         def check(reaction, user):
             return user == ctx.author and reaction.message == message 
         while(1):
