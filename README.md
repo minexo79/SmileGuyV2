@@ -1,6 +1,6 @@
 # SmileGuyV2
 
-Making Things Smile~~~
+Make Things Smile~~~
 
 ## Author
 - iblackcat#4119
