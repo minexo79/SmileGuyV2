@@ -6,6 +6,8 @@ import requests
 import time,asyncio,re,copy
 
 from datahook import yamlhook
+from asyncio import gather
+emojis = ['✊', '🖐', '✌']
 
 class Sokoban():
     def __init__(self,difficulty):
@@ -28,9 +30,8 @@ class Sokoban():
                     if x == 0 or x == width-1 :self.map1[i][x] = "🔲"
                     else : self.map1[i][x]="⬛"
         while 1 :
-            x=[ra.randint(1,high-2),ra.randint(1,width-2)]
-            if  x not in repeat :
-                repeat.append(x)
+            if [ra.randint(1,high-2),ra.randint(1,width-2)] not in repeat :
+                repeat.append([ra.randint(2,high-3),ra.randint(2,width-3)])
             if len(repeat)==2+number:
                 break
 
@@ -239,6 +240,56 @@ class tinygame(commands.Cog):
 
         except FileNotFoundError:
             raise FileNotFoundError("Can't found the image in image folder.")
+
+    
+    async def rps_dm_helper(self,player: discord.User, opponent: discord.User):
+        if player.bot:
+            return random.choice(emojis)
+
+        message = await player.send(f" {opponent}邀請您跟他PK剪刀、石頭、布. 請做出你的選擇.")
+
+        for e in emojis:
+            await message.add_reaction(e)
+
+        try:
+            reaction, _ = await self.bot.wait_for('reaction_add',check=lambda r, u: r.emoji in emojis and r.message.id == message.id and u == player,timeout=60)
+        except asyncio.TimeoutError:
+            return None
+
+        return reaction.emoji
+
+
+
+    @tinygame.command(name='rps',help="猜拳")
+    async def rps(self,ctx, opponent: discord.User = None):
+
+
+      if opponent is None:
+          opponent = self.bot.user
+      author_helper = tinygame.rps_dm_helper(self,ctx.author, opponent)  # Note no "await"
+      opponent_helper = tinygame.rps_dm_helper(self,opponent, ctx.author)
+      author_emoji, opponent_emoji = await gather(author_helper, opponent_helper)
+
+      if author_emoji is None:
+          await ctx.send(f"```diff\n- RPS: {ctx.author} 未在時間內出拳\n```")
+          return
+
+      if opponent_emoji is None:
+          await ctx.send(f"```diff\n- RPS: {opponent} 未在時間內出拳\n```")
+          return
+
+      author_idx = emojis.index(author_emoji)
+      opponent_idx = emojis.index(opponent_emoji)
+
+      if author_idx == opponent_idx:
+          winner = None
+      elif author_idx == (opponent_idx + 1) % 3:
+          winner = ctx.author
+      else:
+          winner = opponent
+
+    # send to main channel
+      await ctx.send([f'【{ctx.author}出{author_emoji}】【{opponent}出{opponent_emoji}】贏家:{winner} !',f'【{ctx.author}出{author_emoji}】【{opponent}出{opponent_emoji}】 平手'][winner is None])        
 
     #
     # ----------------------------------------------------------------------------------------------
