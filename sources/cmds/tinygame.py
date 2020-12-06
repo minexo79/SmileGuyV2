@@ -28,9 +28,8 @@ class Sokoban():
                     if x == 0 or x == width-1 :self.map1[i][x] = "🔲"
                     else : self.map1[i][x]="⬛"
         while 1 :
-            x=[ra.randint(1,high-2),ra.randint(1,width-2)]
-            if  x not in repeat :
-                repeat.append(x)
+            if [ra.randint(1,high-2),ra.randint(1,width-2)] not in repeat :
+                repeat.append([ra.randint(2,high-3),ra.randint(2,width-3)])
             if len(repeat)==2+number:
                 break
 
