@@ -288,8 +288,11 @@ class tinygame(commands.Cog):
           winner = opponent
 
    
-      await ctx.send([f'【{ctx.author}出{author_emoji}】你的對手【{opponent}出{opponent_emoji}】贏家:{winner} !',f'【{ctx.author}出{author_emoji}】【{opponent}出{opponent_emoji}】 平手'][winner is None])
-
+      #await ctx.send([f'【{ctx.author}出{author_emoji}】你的對手【{opponent}出{opponent_emoji}】贏家:{winner} !',f'【{ctx.author}出{author_emoji}】【{opponent}出{opponent_emoji}】 平手'][winner is None])
+      text=[]
+      text.append([f'你:【{ctx.author}出了{author_emoji}】你的對手:【{opponent}出了{opponent_emoji}】\n**贏家:{winner}!**',f'你:【{ctx.author}出{author_emoji}】你的對手:【{opponent}出了{opponent_emoji}】\n **平手**'][winner is None])    
+      embed =discord.Embed(title="猜拳結果",color=0X00ff40,description="".join(text))
+      await ctx.send(embed=embed)
     #
     # ----------------------------------------------------------------------------------------------
     #
