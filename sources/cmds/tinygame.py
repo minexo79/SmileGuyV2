@@ -263,7 +263,6 @@ class tinygame(commands.Cog):
         return reaction.emoji
 
 
-
     @tinygame.command(name='rps',help='猜拳@對戰玩家 None跟機器人對戰 (感謝 檸檬王#1844 撰寫)')
     async def rps(self,ctx, opponent: discord.User = None):
 
