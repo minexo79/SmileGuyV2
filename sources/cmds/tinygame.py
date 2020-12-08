@@ -242,7 +242,9 @@ class tinygame(commands.Cog):
         except FileNotFoundError:
             raise FileNotFoundError("Can't found the image in image folder.")
 
-    
+    # rps
+    # made by: 檸檬王#1844
+    # 109.12.8    
     async def rps_dm_helper(self,player: discord.User, opponent: discord.User):
         if player.bot:
             return ra.choice(emojis)
@@ -262,7 +264,7 @@ class tinygame(commands.Cog):
 
 
 
-    @tinygame.command(name='rps',help='猜拳@對戰玩家 None跟機器人對戰')
+    @tinygame.command(name='rps',help='猜拳@對戰玩家 None跟機器人對戰 (感謝 檸檬王#1844 撰寫)')
     async def rps(self,ctx, opponent: discord.User = None):
 
 
