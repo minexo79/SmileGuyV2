@@ -243,7 +243,7 @@ class tinygame(commands.Cog):
     
     async def rps_dm_helper(self,player: discord.User, opponent: discord.User):
         if player.bot:
-            return random.choice(emojis)
+            return ra.choice(emojis)
 
         message = await player.send(f" {opponent}邀請您跟他PK剪刀、石頭、布. 請做出你的選擇.")
 
@@ -290,7 +290,7 @@ class tinygame(commands.Cog):
    
       #await ctx.send([f'【{ctx.author}出{author_emoji}】你的對手【{opponent}出{opponent_emoji}】贏家:{winner} !',f'【{ctx.author}出{author_emoji}】【{opponent}出{opponent_emoji}】 平手'][winner is None])
       text=[]
-      text.append([f'你:【{ctx.author}出了{author_emoji}】你的對手:【{opponent}出了{opponent_emoji}】\n**贏家:{winner}!**',f'你:【{ctx.author}出{author_emoji}】你的對手:【{opponent}出了{opponent_emoji}】\n **平手**'][winner is None])    
+      text.append([f'你:【{ctx.author}出了{author_emoji}】\n你的對手:【{opponent}出了{opponent_emoji}】\n**贏家:{winner}!**',f'你:【{ctx.author}出{author_emoji}】你的對手:【{opponent}出了{opponent_emoji}】\n **平手**'][winner is None])    
       embed =discord.Embed(title="猜拳結果",color=0X00ff40,description="".join(text))
       await ctx.send(embed=embed)
     #
