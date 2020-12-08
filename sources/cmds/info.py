@@ -14,8 +14,8 @@ class info(commands.Cog):
         embed=discord.Embed(title="SmileGuy About Me",color=self.bot.default_colour)
         embed.set_thumbnail(url="attachment://logo.png")
         # bot image
-        embed.add_field(name="版本/Version",value="1.5",inline=False)
-        embed.add_field(name="作者/Author",value="minexo79\nXiao Xigua\n惡魔柴柴",inline=False)
+        embed.add_field(name="版本/Version",value="1.6",inline=False)
+        embed.add_field(name="作者/Author",value="iblackcat(minexo79), Xiao Xigua, 惡魔柴柴, 檸檬王",inline=False)
         embed.add_field(name="簡介",value="哈囉！我是微笑小子。謝謝你加我到伺服器 >O<",inline=False)
         embed.add_field(name="原始碼/Source",value="https://github.com/minexo79/SmileGuyV2",inline=False)
         embed.add_field(name="邀請連結/Invite Link",value="https://reurl.cc/R4NQOz",inline=False)
@@ -112,7 +112,7 @@ class info(commands.Cog):
         helpDisplay = discord.Embed(title="SmileGuy Commands Help",color=self.bot.default_colour)
         for i in range(len(helpCommand)):
             if groupName == None: 
-                groupName = ""
+                # groupName = ""
                 helpDisplay.add_field(name=f"{ctx.prefix}{helpCommand[i]}",value=helptext[i],inline=False)     
             else:
                 helpDisplay.add_field(name=f"{ctx.prefix}{groupName} {helpCommand[i]}",value=helptext[i],inline=False)   
