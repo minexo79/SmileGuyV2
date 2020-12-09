@@ -272,7 +272,7 @@ class tinygame(commands.Cog):
             opponent = self.bot.user
         else:
             try:
-                message = await opponent.send(f"**{opponent.name}** 邀請您與他『剪刀、石頭、布』，是否同意此次邀約?")
+                message = await opponent.send(f"**{opponent.name}**在『{ctx.author.guild}』的【{ctx.channel}】聊天室 邀請您與他『剪刀、石頭、布』，是否同意此次邀約?")
                 for i in accept:
                     await message.add_reaction(i)
 
