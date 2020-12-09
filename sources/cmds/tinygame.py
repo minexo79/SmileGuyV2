@@ -270,6 +270,10 @@ class tinygame(commands.Cog):
 
         if opponent is None:
             opponent = self.bot.user
+
+        if opponent == self.bot.user:
+          await ctx.send('此次對戰玩家為機器人，遊戲開始。')    
+          
         else:
             try:
                 message = await opponent.send(f"**{opponent.name}**在『{ctx.author.guild}』的【{ctx.channel}】聊天室 邀請您與他『剪刀、石頭、布』，是否同意此次邀約?")
@@ -323,7 +327,8 @@ class tinygame(commands.Cog):
         embed =discord.Embed(title="猜拳結果",color=0X00ff40,description="".join(text))
         await ctx.send(embed=embed)
         if opponent != self.bot.user:
-            await opponent.send(f'猜拳結果請至【{ctx.author.guild}】的【{ctx.channel}】聊天室查看')        
+            await opponent.send(f'猜拳結果請至【{ctx.author.guild}】的【{ctx.channel}】聊天室查看')
+       
     #
     # ----------------------------------------------------------------------------------------------
     #
