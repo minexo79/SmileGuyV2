@@ -273,7 +273,7 @@ class tinygame(commands.Cog):
 
         if opponent == self.bot.user:
           await ctx.send('此次對戰玩家為機器人，遊戲開始。')    
-          
+
         else:
             try:
                 message = await opponent.send(f"**{opponent.name}**在『{ctx.author.guild}』的【{ctx.channel}】聊天室 邀請您與他『剪刀、石頭、布』，是否同意此次邀約?")
@@ -288,10 +288,10 @@ class tinygame(commands.Cog):
                 reaction, _ = await self.bot.wait_for("reaction_add",check=lambda r,u:u == opponent and r.emoji in accept and r.message.id == message.id , timeout=60)
 
                 if reaction.emoji == '✔':
-                    await ctx.send(f"**{opponent.name}** 同意了你的『剪刀、石頭、布』對戰邀約.\n遊戲開始")
+                    await ctx.send(f"**{opponent.name}** 同意了**{ctx.author.name}**『剪刀、石頭、布』對戰邀約.\n遊戲開始")
 
                 elif reaction.emoji == '❌':
-                    await ctx.send(f"**{opponent.name}** 拒絕你的『剪刀、石頭、布』對戰邀約.")
+                    await ctx.send(f"**{opponent.name}** 拒絕了**{ctx.author.name}**的『剪刀、石頭、布』對戰邀約.")
                     return
             except asyncio.TimeoutError:
                 await message.delete()
