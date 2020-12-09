@@ -247,9 +247,9 @@ class tinygame(commands.Cog):
             return ra.choice(emojis)
 
         if player==ctx.author:
-            message = await player.send(f" 您在{player.guild}的{ctx.channel}聊天室邀請了【{opponent}】PK剪刀、石頭、布. 請做出您的選擇.")
+            message = await player.send(f"【{opponent}】同意了你的邀約. 請選擇你要出的拳為?")
         else:
-            message = await player.send(f" 【{opponent}】在{opponent.guild}的{ctx.channel}聊天室邀請您跟他PK剪刀、石頭、布. 請做出您的選擇.")
+            message = await player.send(f"你同意了【{opponent}】猜拳邀約，請選擇你要出的拳為?")
 
         for e in emojis:
             await message.add_reaction(e)
