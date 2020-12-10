@@ -5,7 +5,9 @@ import random as ra
 import requests
 import time,asyncio,re,copy
 from asyncio import gather 
+
 from datahook import yamlhook
+
 emojis = ['✊', '🖐', '✌']
 
 class Sokoban():
@@ -240,7 +242,9 @@ class tinygame(commands.Cog):
         except FileNotFoundError:
             raise FileNotFoundError("Can't found the image in image folder.")
 
-    
+    # rps
+    # made by: 檸檬王#1844
+    # 109.12.8    
     async def rps_dm_helper(self,player: discord.User, opponent: discord.User):
         if player.bot:
             return ra.choice(emojis)
@@ -251,15 +255,15 @@ class tinygame(commands.Cog):
             await message.add_reaction(e)
 
         try:
-            reaction, _ = await self.bot.wait_for('reaction_add',check=lambda r, u: r.emoji in emojis and r.message.id == message.id and u == player,timeout=60)
+            reaction, _ = await self.bot.wait_for('reaction_add',
+            check=lambda r, u: r.emoji in emojis and r.message.id == message.id and u == player,timeout=60)
         except asyncio.TimeoutError:
             return None
 
         return reaction.emoji
 
 
-
-    @tinygame.command(name='rps',help='猜拳@對戰玩家 None跟機器人對戰')
+    @tinygame.command(name='rps',help='猜拳@對戰玩家 None跟機器人對戰 (感謝 檸檬王#1844 撰寫)')
     async def rps(self,ctx, opponent: discord.User = None):
 
 
@@ -290,7 +294,8 @@ class tinygame(commands.Cog):
    
       #await ctx.send([f'【{ctx.author}出{author_emoji}】你的對手【{opponent}出{opponent_emoji}】贏家:{winner} !',f'【{ctx.author}出{author_emoji}】【{opponent}出{opponent_emoji}】 平手'][winner is None])
       text=[]
-      text.append([f'你:【{ctx.author}出了{author_emoji}】\n你的對手:【{opponent}出了{opponent_emoji}】\n**贏家:{winner}!**',f'你:【{ctx.author}出{author_emoji}】你的對手:【{opponent}出了{opponent_emoji}】\n **平手**'][winner is None])    
+      text.append([f'你:【{ctx.author}出了{author_emoji}】\n你的對手:【{opponent}出了{opponent_emoji}】\n **贏家: {winner}!**',
+                   f'你:【{ctx.author}出了{author_emoji}】\n你的對手:【{opponent}出了{opponent_emoji}】\n **平手**'][winner is None])    
       embed =discord.Embed(title="猜拳結果",color=0X00ff40,description="".join(text))
       await ctx.send(embed=embed)
     #
@@ -304,10 +309,15 @@ class tinygame(commands.Cog):
     async def register(self,ctx:commands.Context):
         guild_id = str(ctx.guild.id)
         if guild_id not in list(self.data.keys()):
-            self.data[guild_id] = {}
-            self.data[guild_id]['user'] = []
-            self.data[guild_id]['shrimpcount'] = ra.randint(30,50)
-            self.data[guild_id]['counter'] = 0
+            # create server data
+            self.data[guild_id] = {
+                'user': [],
+                'shrimpcount': ra.randint(30,50),
+                'counter': 0
+            }
+            # self.data[guild_id]['user'] = []
+            # self.data[guild_id]['shrimpcount'] = ra.randint(30,50)
+            # self.data[guild_id]['counter'] = 0
         author_id = str(ctx.author.id)
         for i in self.data[guild_id]['user']:
             if(author_id in i.keys()):
