@@ -330,6 +330,7 @@ class tinygame(commands.Cog):
                      f'你:【{ctx.author}出了{author_emoji}】\n你的對手:【{opponent}出了{opponent_emoji}】\n **平手**'][winner is None])        
         embed = discord.Embed(title="猜拳結果",color=0X00ff40,description="".join(text))
         await ctx.send(embed=embed)
+        
         if opponent != self.bot.user:
             await opponent.send(f'猜拳結果請至【{ctx.author.guild}】的【{ctx.channel}】聊天室查看')
     #
