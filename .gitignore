@@ -3,3 +3,6 @@ sources/database.yaml
 
 sources/__pycache__/
 sources/cmds/__pycache__/
+
+Pipfile
+Pipfile.lock

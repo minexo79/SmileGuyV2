@@ -12,7 +12,7 @@ class vtroles(commands.Cog):
         ydata = yamlhook("config.yaml").load()
         try:
             if message.channel.id in ydata['vtrole']['channel']:
-                if message.content != ydata['vtrole'][message.channel.id]:
+                if message.content not in ydata['vtrole'][message.channel.id]:
                     await message.delete()
                 else:
                     pass
