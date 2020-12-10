@@ -253,7 +253,7 @@ class tinygame(commands.Cog):
         if player==ctx.author:
             message = await player.send(f"【{opponent}】同意了你的邀約. 請選擇你要出的拳為?")
         else:
-            message = await player.send(f"你同意了【{opponent}】猜拳邀約，請選擇你要出的拳為?")
+            message = await player.send(f"你同意了【{opponent}】的猜拳邀約，請選擇你要出的拳為?")
 
         for e in emojis:
             await message.add_reaction(e)
@@ -275,31 +275,31 @@ class tinygame(commands.Cog):
         if opponent is None:
             opponent = self.bot.user
 
-        if opponent == self.bot.user:
+        if opponent.bot:
           await ctx.send('此次對戰玩家為機器人，遊戲開始。')    
 
         else:
             try:
-                message = await opponent.send(f"**{opponent.name}**在『{ctx.author.guild}』的【{ctx.channel}】聊天室 邀請您與他『剪刀、石頭、布』，是否同意此次邀約?")
+                message = await opponent.send(f"**{ctx.author}**在『{ctx.author.guild}』的【{ctx.channel}】聊天室 邀請您與他『剪刀、石頭、布』，是否同意此次邀約?")
                 for i in accept:
                     await message.add_reaction(i)
 
             except discord.errors.Forbidden:
-                await ctx.send(f"無法私訊 **{opponent.name}**!")
+                await ctx.send(f"無法私訊 **{opponent}**!")
                 return
 
             try:
                 reaction, _ = await self.bot.wait_for("reaction_add",check=lambda r,u:u == opponent and r.emoji in accept and r.message.id == message.id , timeout=60)
 
                 if reaction.emoji == '✔':
-                    await ctx.send(f"**{opponent.name}** 同意了**{ctx.author.name}**『剪刀、石頭、布』對戰邀約.\n遊戲開始")
+                    await ctx.send(f"**{opponent}** 同意了**{ctx.author}**『剪刀、石頭、布』對戰邀約。\n遊戲開始")
 
                 elif reaction.emoji == '❌':
-                    await ctx.send(f"**{opponent.name}** 拒絕了**{ctx.author.name}**的『剪刀、石頭、布』對戰邀約.")
+                    await ctx.send(f"**{opponent}** 拒絕了**{ctx.author}**的『剪刀、石頭、布』對戰邀約。")
                     return
             except asyncio.TimeoutError:
                 await message.delete()
-                await ctx.send(f"**{opponent.name}** 沒有在一分鐘內答覆，故取消此次剪刀石頭布的邀約.")
+                await ctx.send(f"**{opponent}** 沒有在一分鐘內答覆，故取消此次與**{ctx.author}**剪刀石頭布的邀約。")
                 return   
 
         author_helper = tinygame.rps_dm_helper(self,ctx,ctx.author, opponent)  
@@ -331,7 +331,7 @@ class tinygame(commands.Cog):
         embed = discord.Embed(title="猜拳結果",color=0X00ff40,description="".join(text))
         await ctx.send(embed=embed)
         
-        if opponent != self.bot.user:
+        if not opponent.bot:
             await opponent.send(f'猜拳結果請至【{ctx.author.guild}】的【{ctx.channel}】聊天室查看')
     #
     # ----------------------------------------------------------------------------------------------
