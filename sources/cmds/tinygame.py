@@ -275,16 +275,11 @@ class tinygame(commands.Cog):
         if opponent is None:
             opponent = self.bot.user
 
-<<<<<<< Updated upstream
-        if opponent == self.bot.user:
-          await ctx.send('此次對戰玩家為機器人，遊戲開始。')    
-=======
         if opponent.bot:
             embed= discord.Embed(title="RPS訊息",color=opponent.color,description="此次對戰玩家為機器人，遊戲開始!")
 
             react_message = await ctx.send(embed=embed)
             #await ctx.send('此次對戰玩家為機器人，遊戲開始。')    
->>>>>>> Stashed changes
 
         else:
             try:
@@ -300,16 +295,6 @@ class tinygame(commands.Cog):
                 reaction, _ = await self.bot.wait_for("reaction_add",check=lambda r,u:u == opponent and r.emoji in accept and r.message.id == message.id , timeout=60)
 
                 if reaction.emoji == '✔':
-<<<<<<< Updated upstream
-                    await ctx.send(f"**{opponent.name}** 同意了**{ctx.author.name}**『剪刀、石頭、布』對戰邀約.\n遊戲開始")
-
-                elif reaction.emoji == '❌':
-                    await ctx.send(f"**{opponent.name}** 拒絕了**{ctx.author.name}**的『剪刀、石頭、布』對戰邀約.")
-                    return
-            except asyncio.TimeoutError:
-                await message.delete()
-                await ctx.send(f"**{opponent.name}** 沒有在一分鐘內答覆，故取消此次剪刀石頭布的邀約.")
-=======
                     embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"**{opponent}** 同意了**{ctx.author}**『剪刀、石頭、布』對戰邀約。\n 遊戲開始")
                     #await ctx.send(f"**{opponent}** 同意了**{ctx.author}**『剪刀、石頭、布』對戰邀約。\n遊戲開始")
                     react_message = await ctx.send(embed=embed)
@@ -324,7 +309,6 @@ class tinygame(commands.Cog):
                 embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"**{opponent}** 沒有在一分鐘內答覆，故取消此次與**{ctx.author}**剪刀石頭布的邀約。")
                 #await ctx.send(f"**{opponent}** 沒有在一分鐘內答覆，故取消此次與**{ctx.author}**剪刀石頭布的邀約。")
                 react_message = await ctx.send(embed=embed)
->>>>>>> Stashed changes
                 return   
 
         author_helper = tinygame.rps_dm_helper(self,ctx,ctx.author, opponent)  
