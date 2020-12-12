@@ -1,5 +1,6 @@
 import random, discord
 from discord.ext import commands
+
 class Ultimate_password():
     def __init__(self, ctx:commands.Context):
         self.password=random.randint(1,100)
@@ -14,6 +15,11 @@ class Ultimate_password():
         elif number > self.password :
             self.high = number
         return False
+
+    @property
+    def debug_answer(self) -> int:
+        return self.password
+
     def range(self):
         return {"low":self.low, "high":self.high}
     def embed(self, text):

@@ -1,3 +1,3 @@
-#games
+# game
 
-__all__=["ultimate_password","sokoban"]
+__all__ = ["ultimate_password", "sokoban"]

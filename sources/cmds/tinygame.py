@@ -7,6 +7,10 @@ import time,asyncio,re,copy
 from asyncio import gather 
 
 from datahook import yamlhook
+from .game import sokoban, ultimate_password
+
+emojis = ['✊', '🖐', '✌']
+accept = ['✔', '❌']
 
 class tinygame(commands.Cog):
 
@@ -51,34 +55,35 @@ class tinygame(commands.Cog):
     async def tinygame(self,ctx:commands.Context):
         pass
 
-    
 
     # ultimate password
     # made by: xiao xigua#8597
     # 109.12.6
-    @tinygame.command(name="ultimate_password",help="終極密碼遊戲")
+    @tinygame.command(name="umps",help="終極密碼遊戲 (感謝 xiao xigua#8597 撰寫)")
     async def ultimate_password(self,ctx):
         game=ultimate_password.Ultimate_password(ctx)
-        def check(m):return m.author == ctx.author and m.channel == ctx.channel
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
         bout=1
         message2 = await ctx.send(embed=game.embed("密碼範圍 1 - 100"))   
         while 1:
             message = await self.bot.wait_for("message",check=check)
             await message.delete()
             if message.content != "break" :
-                if game.userinput(int(message.content)) :
-                    await message2.edit(embed=game.embed(f"恭喜過關\n總共猜了{bout}次"))
+                if game.userinput(int(message.content)):
+                    await message2.edit(embed=game.embed(f"恭喜過關!!\n答案為：**{message.content}**\n總共猜了：{bout}次"))
                     break
                 else : 
-                    bout+=1
-                    if bout>3 :
-                        await message2.edit(embed=game.embed("猜錯三次挑戰失敗"))
+                    bout += 1
+                    if bout > 5:
+                        await message2.edit(embed=game.embed("猜錯三次挑戰失敗!!!"))
                         break
                     number_range=game.range()
                     low=number_range["low"]
                     high=number_range["high"]
                     await message2.edit(embed=game.embed(f"範圍 {low} - {high}"))
-            else : break
+            else:
+                break
 
 
     # sokoban 
