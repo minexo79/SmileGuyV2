@@ -4,10 +4,9 @@ from discord.ext import commands
 import random as ra
 import requests
 import time,asyncio,re,copy
+from asyncio import gather 
 
 from datahook import yamlhook
-from  cmds.game import *
-
 
 class tinygame(commands.Cog):
 
@@ -170,6 +169,109 @@ class tinygame(commands.Cog):
         except FileNotFoundError:
             raise FileNotFoundError("Can't found the image in image folder.")
 
+    # rps
+    # made by: 檸檬王#1844
+    # 109.12.8    
+    async def rps_dm_helper(self,ctx,player: discord.User, opponent: discord.User):
+        if player.bot:
+            return ra.choice(emojis)
+
+        if player==ctx.author:
+            message = await player.send(f"【{opponent}】同意了你的邀約. 請選擇你要出的拳為?")
+        else:
+            message = await player.send(f"你同意了【{opponent}】猜拳邀約，請選擇你要出的拳為?")
+
+        for e in emojis:
+            await message.add_reaction(e)
+
+        try:
+            reaction, _ = await self.bot.wait_for('reaction_add',
+            check=lambda r, u: r.emoji in emojis and r.message.id == message.id and u == player,timeout=60)
+        except asyncio.TimeoutError:
+
+            return None
+
+        return reaction.emoji
+
+
+    @tinygame.command(name='rps',help='猜拳[對戰玩家]、[None]機器人對戰 (感謝 檸檬王#1844 撰寫)')
+    async def rps(self,ctx, opponent: discord.User = None):
+
+
+        if opponent is None:
+            opponent = self.bot.user
+
+        if opponent.bot:
+            embed= discord.Embed(title="RPS訊息",color=opponent.color,description="此次對戰玩家為機器人，遊戲開始!")
+
+            react_message = await ctx.send(embed=embed)
+            #await ctx.send('此次對戰玩家為機器人，遊戲開始。')    
+
+        else:
+            try:
+                message = await opponent.send(f"**{opponent.name}**在『{ctx.author.guild}』的【{ctx.channel}】聊天室 邀請您與他『剪刀、石頭、布』，是否同意此次邀約?")
+                for i in accept:
+                    await message.add_reaction(i)
+
+            except discord.errors.Forbidden:
+                await ctx.send(f"無法私訊 **{opponent.name}**!")
+                return
+
+            try:
+                reaction, _ = await self.bot.wait_for("reaction_add",check=lambda r,u:u == opponent and r.emoji in accept and r.message.id == message.id , timeout=60)
+
+                if reaction.emoji == '✔':
+                    embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"**{opponent}** 同意了**{ctx.author}**『剪刀、石頭、布』對戰邀約。\n 遊戲開始")
+                    #await ctx.send(f"**{opponent}** 同意了**{ctx.author}**『剪刀、石頭、布』對戰邀約。\n遊戲開始")
+                    react_message = await ctx.send(embed=embed)
+
+                elif reaction.emoji == '❌':
+                    embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"**{opponent}** 拒絕了**{ctx.author}**的『剪刀、石頭、布』對戰邀約。")
+                    #await ctx.send(f"**{opponent}** 拒絕了**{ctx.author}**的『剪刀、石頭、布』對戰邀約。")
+                    react_message = await ctx.send(embed=embed)
+                    return
+            except asyncio.TimeoutError:
+                await message.delete()
+                embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"**{opponent}** 沒有在一分鐘內答覆，故取消此次與**{ctx.author}**剪刀石頭布的邀約。")
+                #await ctx.send(f"**{opponent}** 沒有在一分鐘內答覆，故取消此次與**{ctx.author}**剪刀石頭布的邀約。")
+                react_message = await ctx.send(embed=embed)
+                return   
+
+        author_helper = tinygame.rps_dm_helper(self,ctx,ctx.author, opponent)  
+        opponent_helper = tinygame.rps_dm_helper(self,ctx,opponent, ctx.author)
+        author_emoji, opponent_emoji = await gather(author_helper, opponent_helper)
+
+        if author_emoji is None:
+            embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"RPS: {ctx.author} 未在時間內出拳")
+            #await ctx.send(f"```diff\n- RPS: {ctx.author} 未在時間內出拳\n```")
+            await react_message.edit(embed=embed)
+            return
+
+        if opponent_emoji is None:
+            embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"RPS: {opponent} 未在時間內出拳")
+            #await ctx.send(f"```diff\n- RPS: {opponent} 未在時間內出拳\n```")
+            await react_message.edit(embed=embed)
+            return
+
+        author_idx = emojis.index(author_emoji)
+        opponent_idx = emojis.index(opponent_emoji)
+
+        if author_idx == opponent_idx:
+            winner = None
+        elif author_idx == (opponent_idx + 1) % 3:
+            winner = ctx.author
+        else:
+            winner = opponent
+            
+        #await ctx.send([f'【{ctx.author}出{author_emoji}】你的對手【{opponent}出{opponent_emoji}】贏家:{winner} !',f'【{ctx.author}出{author_emoji}】【{opponent}出{opponent_emoji}】 平手'][winner is None])
+        text=[]
+        text.append([f'你:【{ctx.author}出了{author_emoji}】\n你的對手:【{opponent}出了{opponent_emoji}】\n **贏家: {winner}!**',
+                     f'你:【{ctx.author}出了{author_emoji}】\n你的對手:【{opponent}出了{opponent_emoji}】\n **平手**'][winner is None])        
+        embed = discord.Embed(title="猜拳結果",color=opponent.color,description="".join(text))
+        await react_message.edit(embed=embed)
+        
+        if opponent != self.bot.user:
+            await opponent.send(f'猜拳結果請至【{ctx.author.guild}】的【{ctx.channel}】聊天室查看')
     #
     # ----------------------------------------------------------------------------------------------
     #
@@ -181,10 +283,15 @@ class tinygame(commands.Cog):
     async def register(self,ctx:commands.Context):
         guild_id = str(ctx.guild.id)
         if guild_id not in list(self.data.keys()):
-            self.data[guild_id] = {}
-            self.data[guild_id]['user'] = []
-            self.data[guild_id]['shrimpcount'] = ra.randint(30,50)
-            self.data[guild_id]['counter'] = 0
+            # create server data
+            self.data[guild_id] = {
+                'user': [],
+                'shrimpcount': ra.randint(30,50),
+                'counter': 0
+            }
+            # self.data[guild_id]['user'] = []
+            # self.data[guild_id]['shrimpcount'] = ra.randint(30,50)
+            # self.data[guild_id]['counter'] = 0
         author_id = str(ctx.author.id)
         for i in self.data[guild_id]['user']:
             if(author_id in i.keys()):
