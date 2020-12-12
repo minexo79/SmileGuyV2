@@ -9,6 +9,7 @@ from datahook import yamlhook
 class Bot(commands.Bot):
     def __init__(self, prefix: str):
         super(Bot, self).__init__(command_prefix=prefix, help_command=None, intents=Intents().all())
+        self.prefix = prefix
         self.default_colour = 0x3576E8
         self.shoumin_colour = 0xb322ab
         self.error_colour = 0xf0291a
@@ -32,15 +33,15 @@ class Bot(commands.Bot):
         self.sm_print(1, "Connecting...")
         
     async def on_ready(self):
-        await self.change_presence(activity=Game(name="[stest help] This is test machine..."))
-        self.sm_print(1, "SmileGuy is on!")
+        await self.change_presence(activity=Game(name=f"[{self.prefix} help] This is test machine..."))
+        self.sm_print(1, f"{self.user.name} is on!")
 
     async def error_process(self, ctx:commands.Context, error:commands.CommandError):
         member = ctx.author.name
         # user discriminator
         discriminator = ctx.author.discriminator 
         # print to console
-        self.sm_print(3,f"[{member}#{discriminator}]: {error}")
+        self.sm_print(3, f"[{member}#{discriminator}]: {error}")
 
 bot = Bot("stest ")
 

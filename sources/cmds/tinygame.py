@@ -8,106 +8,6 @@ from asyncio import gather
 
 from datahook import yamlhook
 
-emojis = ['✊', '🖐', '✌']
-accept=['✔','❌']
-
-class Sokoban():
-    def __init__(self,difficulty):
-        if difficulty==None :
-            high=10
-            width=10
-            number=1
-        else :
-            high=10 + difficulty
-            width=10 + difficulty
-            number=difficulty
-        self.map1=[[]]*high
-        self.box=[]
-        repeat=[]
-        for i in range(high):
-            if i == 0 or i == high-1 : self.map1[i] = ["🔲"]*width
-            else:
-                self.map1[i]=[""]*width
-                for x in range(width) :
-                    if x == 0 or x == width-1 :self.map1[i][x] = "🔲"
-                    else : self.map1[i][x]="⬛"
-        while 1 :
-            if [ra.randint(1,high-2),ra.randint(1,width-2)] not in repeat :
-                repeat.append([ra.randint(2,high-3),ra.randint(2,width-3)])
-            if len(repeat)==2+number:
-                break
-
-        for i in range(len(repeat)) :
-            if i == 0 :
-                self.player=repeat[0]
-            elif i == 1 :
-                self.end=repeat[1]
-            else :
-                self.box.append(repeat[i])
-    def userinput(self,x):
-        if x in ["◀","🔼","🔽","▶","⏹"]:
-            y={"🔼":self.up,"🔽":self.down,"◀":self.left,"▶":self.right}
-            y[x]()
-    def up(self):
-        if self.map1[self.player[0]-1][self.player[1]] != "🔲" :
-            if ([self.player[0]-1,self.player[1]] !=self.end) and ([self.player[0]-1,self.player[1]] not in self.box):#自己移動
-                self.player[0]-=1
-            elif ([self.player[0]-1,self.player[1]] in self.box) :#推箱子
-                box=self.box[self.box.index([self.player[0]-1,self.player[1]])]
-                if self.map1[box[0]-1][box[1]] !="🔲" and [box[0]-1,box[1]] not in self.box:
-                    if [box[0]-1,box[1]] ==self.end:
-                        del self.box[self.box.index([self.player[0]-1,self.player[1]])]
-                    else :
-                        self.box[self.box.index([self.player[0]-1,self.player[1]])][0]-=1
-                    self.player[0]-=1
-
-    def down(self):
-        if self.map1[self.player[0]+1][self.player[1]] != "🔲" :
-            if ([self.player[0]+1,self.player[1]] !=self.end) and ([self.player[0]+1,self.player[1]] not in self.box):#自己移動
-                self.player[0]+=1
-            elif ([self.player[0]+1,self.player[1]] in self.box) :#推箱子
-                box=self.box[self.box.index([self.player[0]+1,self.player[1]])]
-                if self.map1[box[0]+1][box[1]] !="🔲" and [box[0]+1,box[1]] not in self.box:
-                    if [box[0]+1,box[1]] ==self.end:
-                        del self.box[self.box.index([self.player[0]+1,self.player[1]])]
-                    else :
-                        self.box[self.box.index([self.player[0]+1,self.player[1]])][0]+=1
-                    self.player[0]+=1
-    def left(self):
-        if self.map1[self.player[0]][self.player[1]-1] != "🔲" :
-            if ([self.player[0],self.player[1]-1] !=self.end) and ([self.player[0],self.player[1]-1] not in self.box):#自己移動
-                self.player[1]-=1
-            elif ([self.player[0],self.player[1]-1] in self.box) :#推箱子
-                box=self.box[self.box.index([self.player[0],self.player[1]-1])]
-                if self.map1[box[0]][box[1]-1] !="🔲" and [box[0],box[1]-1] not in self.box:
-                    if [box[0],box[1]-1] ==self.end:
-                        del self.box[self.box.index([self.player[0],self.player[1]-1])]
-                    else :
-                        self.box[self.box.index([self.player[0],self.player[1]-1])][1]-=1
-                    self.player[1]-=1
-    def right(self):
-        if self.map1[self.player[0]][self.player[1]+1] != "🔲" :
-            if ([self.player[0],self.player[1]+1] !=self.end) and ([self.player[0],self.player[1]+1] not in self.box):#自己移動
-                self.player[1]+=1
-            elif ([self.player[0],self.player[1]+1] in self.box) :#推箱子
-                box=self.box[self.box.index([self.player[0],self.player[1]+1])]
-                if self.map1[box[0]][box[1]+1] !="🔲" and [box[0],box[1]+1] not in self.box:
-                    if [box[0],box[1]+1] ==self.end:
-                        del self.box[self.box.index([self.player[0],self.player[1]+1])]
-                    else :
-                        self.box[self.box.index([self.player[0],self.player[1]+1])][1]+=1
-                    self.player[1]+=1
-    def mapprint(self):
-        map2=copy.deepcopy(self.map1)
-        map2[self.player[0]][self.player[1]]="🌝"#人物
-        map2[self.end[0]][self.end[1]]="🟨"#終點
-        for i in self.box :
-            map2[i[0]][i[1]]="🔳"#箱子
-        if not len(self.box):return ("\n".join(["".join(i) for i in map2]),True)
-        else :return ("\n".join(["".join(i) for i in map2]),False)
-        
-
-
 class tinygame(commands.Cog):
 
     def __init__(self, bot:commands.Bot):
@@ -151,6 +51,35 @@ class tinygame(commands.Cog):
     async def tinygame(self,ctx:commands.Context):
         pass
 
+    
+
+    # ultimate password
+    # made by: xiao xigua#8597
+    # 109.12.6
+    @tinygame.command(name="ultimate_password",help="終極密碼遊戲")
+    async def ultimate_password(self,ctx):
+        game=ultimate_password.Ultimate_password(ctx)
+        def check(m):return m.author == ctx.author and m.channel == ctx.channel
+        bout=1
+        message2 = await ctx.send(embed=game.embed("密碼範圍 1 - 100"))   
+        while 1:
+            message = await self.bot.wait_for("message",check=check)
+            await message.delete()
+            if message.content != "break" :
+                if game.userinput(int(message.content)) :
+                    await message2.edit(embed=game.embed(f"恭喜過關\n總共猜了{bout}次"))
+                    break
+                else : 
+                    bout+=1
+                    if bout>3 :
+                        await message2.edit(embed=game.embed("猜錯三次挑戰失敗"))
+                        break
+                    number_range=game.range()
+                    low=number_range["low"]
+                    high=number_range["high"]
+                    await message2.edit(embed=game.embed(f"範圍 {low} - {high}"))
+            else : break
+
 
     # sokoban 
     # made by: xiao xigua#8597
@@ -158,15 +87,12 @@ class tinygame(commands.Cog):
     @tinygame.command(name='sokoban',help="推箱子。(感謝 xiao xigua#8597 撰寫)")
     async def sokoban(self,ctx:commands.Context,level:int=None):
 
-        ww = Sokoban(level)
+        ww = sokoban.Sokoban(level)
         text,_ = ww.mapprint()
         embed = discord.Embed(title=f"sokoban 推箱子\n玩家: {ctx.author}",description=f"```\n{text}\n```",colour=self.bot.default_colour)
         message = await ctx.send(embed=embed)
-        await message.add_reaction("◀")
-        await message.add_reaction("🔼")
-        await message.add_reaction("🔽")
-        await message.add_reaction("▶")
-        await message.add_reaction("⏹")
+        for i in ["◀","🔼","🔽","▶","⏹"] :
+            await message.add_reaction(i)
         def check(reaction, user):
             return user == ctx.author and reaction.message == message 
         while(1):
