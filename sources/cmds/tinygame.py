@@ -275,8 +275,11 @@ class tinygame(commands.Cog):
         if opponent is None:
             opponent = self.bot.user
 
-        if opponent == self.bot.user:
-          await ctx.send('此次對戰玩家為機器人，遊戲開始。')    
+        if opponent.bot:
+            embed= discord.Embed(title="RPS訊息",color=opponent.color,description="此次對戰玩家為機器人，遊戲開始!")
+
+            react_message = await ctx.send(embed=embed)
+            #await ctx.send('此次對戰玩家為機器人，遊戲開始。')    
 
         else:
             try:
@@ -292,14 +295,20 @@ class tinygame(commands.Cog):
                 reaction, _ = await self.bot.wait_for("reaction_add",check=lambda r,u:u == opponent and r.emoji in accept and r.message.id == message.id , timeout=60)
 
                 if reaction.emoji == '✔':
-                    await ctx.send(f"**{opponent.name}** 同意了**{ctx.author.name}**『剪刀、石頭、布』對戰邀約.\n遊戲開始")
+                    embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"**{opponent}** 同意了**{ctx.author}**『剪刀、石頭、布』對戰邀約。\n 遊戲開始")
+                    #await ctx.send(f"**{opponent}** 同意了**{ctx.author}**『剪刀、石頭、布』對戰邀約。\n遊戲開始")
+                    react_message = await ctx.send(embed=embed)
 
                 elif reaction.emoji == '❌':
-                    await ctx.send(f"**{opponent.name}** 拒絕了**{ctx.author.name}**的『剪刀、石頭、布』對戰邀約.")
+                    embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"**{opponent}** 拒絕了**{ctx.author}**的『剪刀、石頭、布』對戰邀約。")
+                    #await ctx.send(f"**{opponent}** 拒絕了**{ctx.author}**的『剪刀、石頭、布』對戰邀約。")
+                    react_message = await ctx.send(embed=embed)
                     return
             except asyncio.TimeoutError:
                 await message.delete()
-                await ctx.send(f"**{opponent.name}** 沒有在一分鐘內答覆，故取消此次剪刀石頭布的邀約.")
+                embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"**{opponent}** 沒有在一分鐘內答覆，故取消此次與**{ctx.author}**剪刀石頭布的邀約。")
+                #await ctx.send(f"**{opponent}** 沒有在一分鐘內答覆，故取消此次與**{ctx.author}**剪刀石頭布的邀約。")
+                react_message = await ctx.send(embed=embed)
                 return   
 
         author_helper = tinygame.rps_dm_helper(self,ctx,ctx.author, opponent)  
@@ -307,11 +316,15 @@ class tinygame(commands.Cog):
         author_emoji, opponent_emoji = await gather(author_helper, opponent_helper)
 
         if author_emoji is None:
-            await ctx.send(f"```diff\n- RPS: {ctx.author} 未在時間內出拳\n```")
+            embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"RPS: {ctx.author} 未在時間內出拳")
+            #await ctx.send(f"```diff\n- RPS: {ctx.author} 未在時間內出拳\n```")
+            await react_message.edit(embed=embed)
             return
 
         if opponent_emoji is None:
-            await ctx.send(f"```diff\n- RPS: {opponent} 未在時間內出拳\n```")
+            embed= discord.Embed(title="RPS訊息",color=opponent.color,description=f"RPS: {opponent} 未在時間內出拳")
+            #await ctx.send(f"```diff\n- RPS: {opponent} 未在時間內出拳\n```")
+            await react_message.edit(embed=embed)
             return
 
         author_idx = emojis.index(author_emoji)
@@ -328,8 +341,8 @@ class tinygame(commands.Cog):
         text=[]
         text.append([f'你:【{ctx.author}出了{author_emoji}】\n你的對手:【{opponent}出了{opponent_emoji}】\n **贏家: {winner}!**',
                      f'你:【{ctx.author}出了{author_emoji}】\n你的對手:【{opponent}出了{opponent_emoji}】\n **平手**'][winner is None])        
-        embed = discord.Embed(title="猜拳結果",color=0X00ff40,description="".join(text))
-        await ctx.send(embed=embed)
+        embed = discord.Embed(title="猜拳結果",color=opponent.color,description="".join(text))
+        await react_message.edit(embed=embed)
         
         if opponent != self.bot.user:
             await opponent.send(f'猜拳結果請至【{ctx.author.guild}】的【{ctx.channel}】聊天室查看')
