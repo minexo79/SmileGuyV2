@@ -7,7 +7,7 @@ import time,asyncio,re,copy
 from asyncio import gather 
 
 from datahook import yamlhook
-from .game import sokoban, ultimate_password
+from .game import sokoban, ultimate_password, box2048
 
 emojis = ['✊', '🖐', '✌']
 accept = ['✔', '❌']
@@ -116,6 +116,57 @@ class tinygame(commands.Cog):
                 successfulEmbed = discord.Embed(colour=self.bot.default_colour)
                 successfulEmbed.add_field(name="sokoban 推箱子",value=f"恭喜 {ctx.author} 過關!!!",inline=False)
                 await ctx.send(embed=successfulEmbed)
+                break
+
+    @tinygame.command(name='game2048',help='hihi')     
+    async def game2048(self,ctx:commands.Context):
+        
+        gamebox = box2048.box2048()
+        text,_ = gamebox.stringlize()
+        gamebox.numerize()
+        embed = discord.Embed(title=f'2048 玩家:{ctx.author}',description=f"\n{text}\n",colour=self.bot.default_colour)
+        embed.add_field(name='Score:',value=gamebox.score)
+        embed.add_field(name='順序',value='🟥>🟧>🟨>🟩>🟦>🟪>🟫>⬜>❤️>🧡>💛',inline=False)
+        message = await ctx.send(embed=embed)
+        await message.add_reaction("◀")
+        await message.add_reaction("🔼")
+        await message.add_reaction("🔽")
+        await message.add_reaction("▶")
+        await message.add_reaction("⏹")
+        
+        def check(reaction, user):
+            return user == ctx.author and reaction.message == message
+
+        while(1):
+            reaction,user= await self.bot.wait_for("reaction_add",timeout=120.0,check=check)
+            await message.remove_reaction(reaction,user)
+
+            if str(reaction) == '⏹':
+                await message.delete()
+                await ctx.send('遊戲中止')
+                break
+
+            gamebox.userinput(str(reaction))
+            text,end = gamebox.stringlize()
+            gamebox.numerize()
+            
+            embed = discord.Embed(title =f'2048 玩家:{ctx.author}',description=f'\n{text}\n',colour=self.bot.default_colour)
+            embed.add_field(name='Score:',value=gamebox.score)
+            embed.add_field(name='順序',value='🟥>🟧>🟨>🟩>🟦>🟪>🟫>⬜>❤️>🧡>💛',inline=False)
+            await message.edit(embed = embed)
+
+            if end:
+                await message.delete()
+                loseembed = discord.Embed(title = f'2048',description=f'\n{text}\n',colour=self.bot.default_colour)
+                loseembed.add_field(name='你輸了! 你的最終分數為:',value=gamebox.score)
+                await ctx.send(embed=loseembed)
+                break
+
+            if '💛' in text:
+                await message.delete()
+                winembed = discord.Embed(title = f'2048',description=f'\n{text}\n',colour=self.bot.default_colour)
+                winembed.add_field(name='你贏了! 你的最終分數為:',value=gamebox.score)
+                await ctx.send(embed=winembed)
                 break
 
     @tinygame.command(name='pick',help='自訂抽籤，選項之間可用`，`,`空格`,`/`,`|`連結(不要混用!)。')
