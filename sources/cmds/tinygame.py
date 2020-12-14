@@ -25,7 +25,7 @@ class tinygame(commands.Cog):
             # initialize data
             print("Found new Database! initializing...")
             data['shrimp'] = {}
-        
+
         self.data = data['shrimp']
 
         self.dump_yaml = yamlhook("database.yaml").Operate
