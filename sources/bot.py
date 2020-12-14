@@ -43,7 +43,9 @@ class Bot(commands.Bot):
         # print to console
         self.sm_print(3, f"[{member}#{discriminator}]: {error}")
 
-bot = Bot("stest ")
+
+ydata = yamlhook("config.yaml").load()
+bot = Bot(prefix=ydata['bot']['prefix'])
 
 # Load Cog
 def loadCog():
@@ -58,6 +60,6 @@ if __name__ == "__main__":
     # windows        : os.system("cls")
     # linux or other : os.system("clear")
     # 抓取 bot token
-    ydata = yamlhook("config.yaml").load()
     loadCog()
+    bot.sm_print(1,f"Using Prefix: {bot.prefix}")
     bot.run(ydata['bot']['token'])
