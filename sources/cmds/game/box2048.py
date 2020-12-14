@@ -84,7 +84,6 @@ class box2048():
                     if curlst[w][r] == '0':
                         chord = [w,r,int(curlst[i+1][r])]
                         moved = 1
-                        pass
                     if curlst[i+1][r] == curlst[w][r] and not 'l' in curlst[w][r]:
                         chord = [w,r,str(int(curlst[i+1][r])*2)+'l']
                         moved = 1
@@ -123,7 +122,6 @@ class box2048():
                     if curlst[w][r] == '0':
                         chord = [w,r,int(curlst[b][r])]
                         moved = 1
-                        pass
                     if curlst[b][r] == curlst[w][r] and not 'l' in curlst[w][r]:
                         chord = [w,r,str(int(curlst[b][r])*2)+'l']
                         moved = 1
@@ -161,7 +159,6 @@ class box2048():
                     if curlst[r][w] == '0':
                         chord = [r,w,int(curlst[r][b])]
                         moved = 1
-                        pass
                     if curlst[r][b] == curlst[r][w] and not 'l' in curlst[r][w]:
                         chord = [r,w,str(int(curlst[r][w])*2)+'l']
                         moved = 1
@@ -199,7 +196,6 @@ class box2048():
                     if curlst[r][w] == '0':
                         chord = [r,w,int(curlst[r][i+1])]
                         moved = 1
-                        pass
                     if curlst[r][w] == curlst[r][i+1] and not 'l' in curlst[r][w]:
                         chord = [r,w,str(int(curlst[r][w])*2)+'l']
                         moved = 1

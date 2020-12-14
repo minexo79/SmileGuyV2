@@ -160,14 +160,14 @@ class tinygame(commands.Cog):
 
             if end:
                 await message.delete()
-                loseembed = discord.Embed(title = f'2048',description=f'\n{text}\n',colour=self.bot.default_colour)
+                loseembed = discord.Embed(title = '2048',description=f'\n{text}\n',colour=self.bot.default_colour)
                 loseembed.add_field(name='你輸了! 你的最終分數為:',value=gamebox.score)
                 await ctx.send(embed=loseembed)
                 break
 
             if '💛' in text:
                 await message.delete()
-                winembed = discord.Embed(title = f'2048',description=f'\n{text}\n',colour=self.bot.default_colour)
+                winembed = discord.Embed(title = '2048',description=f'\n{text}\n',colour=self.bot.default_colour)
                 winembed.add_field(name='你贏了! 你的最終分數為:',value=gamebox.score)
                 await ctx.send(embed=winembed)
                 break
@@ -182,17 +182,17 @@ class tinygame(commands.Cog):
             # define a list contained Delimiter
             delimiter = [',','，','/','|']
             # check if there is ',' and '，'
-            input = list(user_input)
-            for i in range(len(input)):
+            inputlst = list(user_input)
+            for i in range(len(inputlst)):
                 pt = -1
                 for j in range(len(delimiter)):
-                    if delimiter[j] in input[i]:
-                        commalist = input[i].split(delimiter[j])
+                    if delimiter[j] in inputlst[i]:
+                        commalist = inputlst[i].split(delimiter[j])
                         data += commalist
                         pt = i
                         break
                 if pt != i:
-                    data.append(input[i])
+                    data.append(inputlst[i])
             # use random to pick up a selection
             selection = ra.choice(data)
             # show message
@@ -221,7 +221,7 @@ class tinygame(commands.Cog):
             # embed
             resultEmbed = discord.Embed(title='抽籤結果',color=self.bot.shoumin_colour)
             resultEmbed.set_image(url=f"attachment://{choose_img}.png")
-            resultEmbed.set_footer(text=f"👾圖片繪師：Vtuber 雙命裂\nhttps://www.youtube.com/user/jokeherogjo")
+            resultEmbed.set_footer(text="👾圖片繪師：Vtuber 雙命裂\nhttps://www.youtube.com/user/jokeherogjo")
             # send to user
             await ctx.send(embed=resultEmbed,file=file)
 
@@ -416,11 +416,11 @@ class tinygame(commands.Cog):
                             if (w <= 3):
                                 # little shrimp
                                 resultEmbed = self.shrimpEmbed(ctx,f"{ctx.author.mention}\n你釣到了...**小蝦蝦!!!**")
-                                resultEmbed.add_field(name=None,value=f"經驗值加`0.5`!",inline=True)
+                                resultEmbed.add_field(name=None,value="經驗值加`0.5`!",inline=True)
                             else:
                                 # special shrimp
                                 resultEmbed = self.shrimpEmbed(ctx,f"{ctx.author.mention}\n你釣到了...**大蝦蝦!!!**")
-                                resultEmbed.add_field(name=None,value=f"經驗值加`1`!",inline=True)
+                                resultEmbed.add_field(name=None,value="經驗值加`1`!",inline=True)
                             # shrimp image
                             resultEmbed.set_thumbnail(url=f"attachment://{w}.png")
                             await ctx.send(file = shrimpfile, embed = resultEmbed)
