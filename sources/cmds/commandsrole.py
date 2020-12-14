@@ -23,7 +23,7 @@ class commandsrole(commands.Cog):
         self.rolesdata = ydata.load()
 
     @commands.command(name='addcm', help="新增指令身分組 `指令` `身分組`")
-    @commands.has_permissions(administrator=True)
+    @commands.has_permissions(administrator=True,manage_roles=True)
     async def add_command_role(self, ctx:commands.Context, cmds, * , role:discord.Role):
 
         split_cmd = str(cmds).split(',')
