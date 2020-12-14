@@ -61,5 +61,5 @@ if __name__ == "__main__":
     # linux or other : os.system("clear")
     # 抓取 bot token
     loadCog()
-    bot.sm_print(1,f"Using Prefix: {bot.prefix}")
+    bot.sm_print(1, f"Using Prefix: {bot.prefix}")
     bot.run(ydata['bot']['token'])
