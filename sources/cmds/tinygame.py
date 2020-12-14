@@ -19,8 +19,11 @@ class tinygame(commands.Cog):
         # load yaml
         data = (yamlhook("database.yaml").load())
 
+        print("-----------------------")
+        print("Check Database ...")
         if (data == None) or ('shrimp' not in list(data.keys())) or (type(data['shrimp']) is not dict):
             # initialize data
+            print("Found new Database! initializing...")
             data['shrimp'] = {}
 
         self.data = data['shrimp']
