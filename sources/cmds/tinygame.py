@@ -19,11 +19,8 @@ class tinygame(commands.Cog):
         # load yaml
         data = (yamlhook("database.yaml").load())
 
-        print("-----------------------")
-        print("Check Database ...")
         if (data == None) or ('shrimp' not in list(data.keys())) or (type(data['shrimp']) is not dict):
             # initialize data
-            print("Found new Database! initializing...")
             data['shrimp'] = {}
 
         self.data = data['shrimp']
@@ -76,6 +73,7 @@ class tinygame(commands.Cog):
                 if not game.range()["low"] < int(message.content) < game.range()["high"] :
                     await ctx.send("請輸入範圍內數字",delete_after=5)
                     continue
+
                 if game.userinput(int(message.content)):
                     await message2.edit(embed=game.embed(f"恭喜過關!!\n答案為：**{message.content}**\n總共猜了：{bout}次"))
                     break
