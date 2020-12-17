@@ -15,7 +15,7 @@ class info(commands.Cog):
         embed.set_thumbnail(url="attachment://logo.png")
         # bot image
         embed.add_field(name="版本/Version",value="1.6",inline=False)
-        embed.add_field(name="作者/Author",value="iblackcat(minexo79), Xiao Xigua, 惡魔柴柴, 檸檬王",inline=False)
+        embed.add_field(name="作者/Author",value="iblackcat, Xiao Xigua, 惡魔柴柴, 檸檬王, tommy2131",inline=False)
         embed.add_field(name="簡介",value="哈囉！我是微笑小子。謝謝你加我到伺服器 >O<",inline=False)
         embed.add_field(name="原始碼/Source",value="https://github.com/minexo79/SmileGuyV2",inline=False)
         embed.add_field(name="邀請連結/Invite Link",value="https://reurl.cc/R4NQOz",inline=False)
