@@ -73,6 +73,10 @@ class tinygame(commands.Cog):
             message = await self.bot.wait_for("message",check=check)
             await message.delete()
             if message.content != "break" :
+                if not game.range()["low"] < int(message.content) < game.range()["high"] :
+                    await ctx.send("請輸入範圍內數字",delete_after=5)
+                    continue
+
                 if game.userinput(int(message.content)):
                     await message2.edit(embed=game.embed(f"恭喜過關!!\n答案為：**{message.content}**\n總共猜了：{bout}次"))
                     break
