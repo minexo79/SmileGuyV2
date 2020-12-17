@@ -125,7 +125,7 @@ class tinygame(commands.Cog):
                 await ctx.send(embed=successfulEmbed)
                 break
 
-    @tinygame.command(name='game2048',help='2048。(感謝 tommy2131#3750 撰寫))     
+    @tinygame.command(name='game2048',help='2048。(感謝 tommy2131#3750 撰寫)')     
     async def game2048(self,ctx:commands.Context):
         
         gamebox = box2048.box2048()
