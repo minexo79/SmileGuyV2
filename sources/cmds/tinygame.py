@@ -83,7 +83,7 @@ class tinygame(commands.Cog):
                 else : 
                     bout += 1
                     if bout > 5:
-                        await message2.edit(embed=game.embed("猜錯三次挑戰失敗!!!"))
+                        await message2.edit(embed=game.embed("猜錯五次挑戰失敗!!!"))
                         break
                     number_range=game.range()
                     low=number_range["low"]
