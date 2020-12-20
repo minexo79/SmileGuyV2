@@ -92,7 +92,9 @@ class tinygame(commands.Cog):
             else:
                 break
 
-
+    # maze 
+    # made by: xiao xigua#8597
+    # 109.12.20
     @tinygame.command(name='maze',help="走迷宮。(感謝 xiao xigua#8597 撰寫)")
     async def maze(self,ctx:commands.Context,level:int = None) :
         game = maze.Play(level)

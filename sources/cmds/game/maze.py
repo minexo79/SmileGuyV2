@@ -13,11 +13,11 @@ class Game():
             self.height += level
             self.width += level
       
-        for i in range(self.height):
+        for i in range(self.height): #generate a blank map
             self.map.append([])
             for x in range(self.width):
                 self.map[i].append("⬛")
-        self.list = [[2,0],[0,2],[-2,0],[0,-2]]
+        self.list = [[2,0],[0,2],[-2,0],[0,-2]] #right under left up 
         self.record = []
         self.x = 1
         self.y = 1
@@ -40,11 +40,11 @@ class Game():
                 else :
                     self.x,self.y = self.record[len(self.record)-1]
                     del self.record[len(self.record)-1]
-            if len(self.record) > self.max :
+            if len(self.record) > self.max : #Farthest position
                 self.maxXY = [self.x,self.y]
                 self.max = len(self.record)
                         
-    def go(self,x,y):
+    def go(self,x,y): #mobile
         if not 0 < self.x < self.width and 0 < self.y <self.height : return
         if 0 < self.y+y <self.height and 0 < self.x+x <self.width :
             if self.map[self.y+y][self.x+x] != '⬜' :
@@ -65,11 +65,11 @@ class Play():
             if self.go(self.list[x][0],self.list[x][1]) :
                 return True
     def go(self,x,y):
-        if self.map[self.player[1]+y][self.player[0]+x] == "🟥" : return True
+        if self.map[self.player[1]+y][self.player[0]+x] == "🟥" : return True #end
         if self.map[self.player[1]+y][self.player[0]+x] == "⬜" :
             self.player[0] += x
             self.player[1] += y
     def print(self) :
         w = copy.deepcopy(self.map)
-        w[self.player[1]][self.player[0]] = '🟨'
+        w[self.player[1]][self.player[0]] = '🟨' #player
         return "\n".join(map(lambda x : "".join(x),w))
