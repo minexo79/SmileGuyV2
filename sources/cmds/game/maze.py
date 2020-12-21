@@ -1,7 +1,8 @@
 import random
 import copy
+import math
 class Game():
-    def __init__(self,level):
+    def __init__(self,level = None):
         self.map = []
         self.height = 11
         self.width = 11 
@@ -57,14 +58,20 @@ class Game():
         return self.map
 class Play():
     def __init__(self,level):
-        self.map = Game(level).returnmap()
+        if level == None :
+            self.map = Game().returnmap()
+        elif level.isdigit() :
+            self.map = Game(int(level)).returnmap()
+        else :
+            self.map = Game().returnmap()
+        self.level = level
         self.player = [1,1]
         self.list = {"🔼":[0,-1],"🔽":[0,1],"◀":[-1,0],"▶":[1,0]}
-    def userinput(self,x):
+    def userinput(self,x) :
         if x in self.list.keys() :
             if self.go(self.list[x][0],self.list[x][1]) :
                 return True
-    def go(self,x,y):
+    def go(self,x,y) :
         if self.map[self.player[1]+y][self.player[0]+x] == "🟥" : return True #end
         if self.map[self.player[1]+y][self.player[0]+x] == "⬜" :
             self.player[0] += x
@@ -72,4 +79,12 @@ class Play():
     def print(self) :
         w = copy.deepcopy(self.map)
         w[self.player[1]][self.player[0]] = '🟨' #player
+        if self.level == "limit" :
+            w = self.limit(w)
         return "\n".join(map(lambda x : "".join(x),w))
+    def limit(self,Map) :
+        for i in range(len(Map)) :
+            for x in range(len(Map[i])) :
+                if 2 < math.sqrt(abs((self.player[0] - x)**2 + (self.player[1] - i)**2)) :
+                    Map[i][x] = "🔳"
+        return Map
