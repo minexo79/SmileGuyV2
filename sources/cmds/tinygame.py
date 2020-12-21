@@ -7,7 +7,7 @@ import time,asyncio,re,copy
 from asyncio import gather 
 
 from datahook import yamlhook
-from .game import sokoban, ultimate_password, box2048
+from .game import sokoban, ultimate_password, box2048, maze
 
 emojis = ['✊', '🖐', '✌']
 accept = ['✔', '❌']
@@ -83,7 +83,7 @@ class tinygame(commands.Cog):
                 else : 
                     bout += 1
                     if bout > 5:
-                        await message2.edit(embed=game.embed("猜錯三次挑戰失敗!!!"))
+                        await message2.edit(embed=game.embed("猜錯五次挑戰失敗!!!"))
                         break
                     number_range=game.range()
                     low=number_range["low"]
@@ -91,6 +91,32 @@ class tinygame(commands.Cog):
                     await message2.edit(embed=game.embed(f"範圍 {low} - {high}"))
             else:
                 break
+
+    # maze 
+    # made by: xiao xigua#8597
+    # 109.12.20
+    @tinygame.command(name='maze',help="走迷宮。(感謝 xiao xigua#8597 撰寫)")
+    async def maze(self,ctx:commands.Context,level:int = None) :
+        game = maze.Play(level)
+        embed = discord.Embed(title=f"maze 走迷宮\n玩家: {ctx.author}",description=f"```\n{game.print()}\n```",colour=self.bot.default_colour)
+        message = await ctx.send(embed = embed)
+        for i in ["◀","🔼","🔽","▶","⏹"] :
+            await message.add_reaction(i)
+        while 1 :
+            reaction, user = await self.bot.wait_for("reaction_add",timeout=60.0,
+            check=lambda reaction, user:user == ctx.author and reaction.message == message )
+            await message.remove_reaction(reaction,user)
+            if str(reaction) == "⏹" :
+                await message.delete()
+                break
+            if game.userinput(str(reaction)) :
+                await message.delete()
+                successfulEmbed = discord.Embed(colour=self.bot.default_colour)
+                successfulEmbed.add_field(name="maze 迷宮",value=f"恭喜 {ctx.author} 過關!!!",inline=False)
+                await ctx.send(embed=successfulEmbed)
+                break
+            embed = discord.Embed(title=f"maze 走迷宮\n玩家: {ctx.author}",description=f"```\n{game.print()}\n```",colour=self.bot.default_colour)
+            await message.edit(embed = embed)
 
 
     # sokoban 

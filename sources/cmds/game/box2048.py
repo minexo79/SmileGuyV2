@@ -78,12 +78,15 @@ class box2048():
                 w = i+1
                 while w>0:
                     w -= 1
+                    #[w][r]是目標方格  
+                    #[i+1][r]是原方格
                     if curlst[i+1][r] == '0':
                         chord = []
                         break
                     if curlst[w][r] == '0':
                         chord = [w,r,int(curlst[i+1][r])]
                         moved = 1
+                        pass
                     if curlst[i+1][r] == curlst[w][r] and not 'l' in curlst[w][r]:
                         chord = [w,r,str(int(curlst[i+1][r])*2)+'l']
                         moved = 1
@@ -122,6 +125,7 @@ class box2048():
                     if curlst[w][r] == '0':
                         chord = [w,r,int(curlst[b][r])]
                         moved = 1
+                        pass
                     if curlst[b][r] == curlst[w][r] and not 'l' in curlst[w][r]:
                         chord = [w,r,str(int(curlst[b][r])*2)+'l']
                         moved = 1
@@ -156,11 +160,13 @@ class box2048():
                     w += 1
                     if curlst[r][b] == '0':
                         chord = []
+                        break
                     if curlst[r][w] == '0':
                         chord = [r,w,int(curlst[r][b])]
                         moved = 1
+                        continue
                     if curlst[r][b] == curlst[r][w] and not 'l' in curlst[r][w]:
-                        chord = [r,w,str(int(curlst[r][w])*2)+'l']
+                        chord = [r,w,str(int(curlst[r][b])*2)+'l']
                         moved = 1
                         score += int(curlst[r][b])*2
                         break
@@ -196,6 +202,7 @@ class box2048():
                     if curlst[r][w] == '0':
                         chord = [r,w,int(curlst[r][i+1])]
                         moved = 1
+                        pass
                     if curlst[r][w] == curlst[r][i+1] and not 'l' in curlst[r][w]:
                         chord = [r,w,str(int(curlst[r][w])*2)+'l']
                         moved = 1
@@ -220,24 +227,23 @@ class box2048():
     def check(self):
         lst = self.game_list
         length = len(lst)
-        check = 0
+        for i in lst:
+            if '⬛' in i:
+                return 0
         for i in range(len(lst)):
             w = i%2
             while w<len(lst):
                 if w+1<length:
-                    if lst[i][w+1] != lst[i][w] and lst[i][w+1]!='⬛':
-                        check+=1
+                    if lst[i][w+1] == lst[i][w] or lst[i][w+1] == '⬛':
+                        return 0
                 if w-1>-1:
-                    if lst[i][w-1] != lst[i][w] and lst[i][w-1]!='⬛':
-                        check+=1
+                    if lst[i][w-1] == lst[i][w] or lst[i][w-1] == '⬛':
+                        return 0 
                 if i+1<length:
-                    if lst[i+1][w] != lst[i][w] and lst[i+1][w]!='⬛':
-                        check+=1
+                    if lst[i+1][w] == lst[i][w] or lst[i+1][w] =='⬛':
+                        return 0 
                 if i-1>-1:
-                    if lst[i-1][w] != lst[i][w] and lst[i-1][w]!='⬛':
-                        check+=1
+                    if lst[i-1][w] == lst[i][w] or lst[i-1][w] =='⬛':
+                        return 0 
                 w+=2
-        if (check==length*(length-1)*2):
-            return 1
-        else:
-            return 0
+        return 1
