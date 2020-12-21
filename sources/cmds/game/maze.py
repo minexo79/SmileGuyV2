@@ -57,13 +57,13 @@ class Game():
     def returnmap(self):
         return self.map
 class Play():
-    def __init__(self,level):
+    def __init__(self,level,number):
         if level == None :
             self.map = Game().returnmap()
         elif level.isdigit() :
             self.map = Game(int(level)).returnmap()
         else :
-            self.map = Game().returnmap()
+            self.map = Game(number).returnmap()
         self.level = level
         self.player = [1,1]
         self.list = {"🔼":[0,-1],"🔽":[0,1],"◀":[-1,0],"▶":[1,0]}

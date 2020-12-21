@@ -96,8 +96,8 @@ class tinygame(commands.Cog):
     # made by: xiao xigua#8597
     # 109.12.20
     @tinygame.command(name='maze',help="走迷宮。(感謝 xiao xigua#8597 撰寫)")
-    async def maze(self,ctx:commands.Context,level = None) :
-        game = maze.Play(level)
+    async def maze(self,ctx:commands.Context,level = None, number:int =None) :
+        game = maze.Play(level,number)
         embed = discord.Embed(title=f"maze 走迷宮\n玩家: {ctx.author}",description=f"```\n{game.print()}\n```",colour=self.bot.default_colour)
         message = await ctx.send(embed = embed)
         for i in ["◀","🔼","🔽","▶","⏹"] :
