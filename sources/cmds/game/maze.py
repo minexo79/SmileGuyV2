@@ -7,7 +7,7 @@ class Game():
         self.height = 11
         self.width = 11 
         if level != None :
-            if level/2 != 0 :
+            if level/2 == 0 :
                 level+=1
             if level > 21 :
                 level = 21
