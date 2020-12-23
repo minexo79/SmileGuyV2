@@ -35,15 +35,16 @@ class Game():
                 if self.go(i[0],i[1]) :
                     number += 1
                     break
+            if len(self.record) > self.max : #Farthest position
+                self.maxXY = [self.x,self.y]
+                self.max = len(self.record)
             if not number :
                 if not len(self.record) :
                     break
                 else :
                     self.x,self.y = self.record[len(self.record)-1]
                     del self.record[len(self.record)-1]
-            if len(self.record) > self.max : #Farthest position
-                self.maxXY = [self.x,self.y]
-                self.max = len(self.record)
+
                         
     def go(self,x,y): #mobile
         if not 0 < self.x < self.width and 0 < self.y <self.height : return
@@ -56,30 +57,40 @@ class Game():
                 return True        
     def returnmap(self):
         return self.map
+    def returnmax(self) :
+        return self.max
 class Play():
-    def __init__(self,level,number):
-        if level == None :
-            self.map = Game().returnmap()
-        elif level.isdigit() :
-            self.map = Game(int(level)).returnmap()
-        else :
-            self.map = Game(number).returnmap()
-        self.level = level
+    def __init__(self,args):
+        x = 0
+        if len(args) :
+            for i in args :
+                if i.isdigit() :
+                    game = Game(int(i))
+                    x+=1
+        if not x :
+            game = Game()
+        self.map = game.returnmap()
+        self.max = game.returnmax()
+        self.step = 0
+        self.args = args
         self.player = [1,1]
         self.list = {"🔼":[0,-1],"🔽":[0,1],"◀":[-1,0],"▶":[1,0]}
     def userinput(self,x) :
         if x in self.list.keys() :
             if self.go(self.list[x][0],self.list[x][1]) :
                 return True
+            if "extreme" in self.args and self.step > self.max*2 + 1:
+                return False
     def go(self,x,y) :
         if self.map[self.player[1]+y][self.player[0]+x] == "🟥" : return True #end
         if self.map[self.player[1]+y][self.player[0]+x] == "⬜" :
             self.player[0] += x
             self.player[1] += y
+            self.step += 1
     def print(self) :
         w = copy.deepcopy(self.map)
         w[self.player[1]][self.player[0]] = '🟨' #player
-        if self.level == "limit" :
+        if "limit" in self.args :
             w = self.limit(w)
         return "\n".join(map(lambda x : "".join(x),w))
     def limit(self,Map) :

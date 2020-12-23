@@ -92,13 +92,20 @@ class tinygame(commands.Cog):
             else:
                 break
 
+
     # maze 
     # made by: xiao xigua#8597
     # 109.12.20
     @tinygame.command(name='maze',help="走迷宮。(感謝 xiao xigua#8597 撰寫)")
-    async def maze(self,ctx:commands.Context,level = None, number:int =None) :
-        game = maze.Play(level,number)
-        embed = discord.Embed(title=f"maze 走迷宮\n玩家: {ctx.author}",description=f"```\n{game.print()}\n```",colour=self.bot.default_colour)
+    async def maze(self,ctx:commands.Context,*args) :
+        game = maze.Play(args)
+        mode = []
+        for i in args :
+            if not i.isdigit() :
+                mode.append(i)
+        if not len(mode) : modestr = "preset"
+        else : modestr = ",".join(mode)
+        embed = discord.Embed(title=f"maze 走迷宮\n玩家: {ctx.author}\nMode: {modestr}",description=f"```\n{game.print()}\n```",colour=self.bot.default_colour)
         message = await ctx.send(embed = embed)
         for i in ["◀","🔼","🔽","▶","⏹"] :
             await message.add_reaction(i)
@@ -109,13 +116,20 @@ class tinygame(commands.Cog):
             if str(reaction) == "⏹" :
                 await message.delete()
                 break
-            if game.userinput(str(reaction)) :
+            gameend = game.userinput(str(reaction))
+            if gameend :
                 await message.delete()
                 successfulEmbed = discord.Embed(colour=self.bot.default_colour)
                 successfulEmbed.add_field(name="maze 迷宮",value=f"恭喜 {ctx.author} 過關!!!",inline=False)
                 await ctx.send(embed=successfulEmbed)
                 break
-            embed = discord.Embed(title=f"maze 走迷宮\n玩家: {ctx.author}",description=f"```\n{game.print()}\n```",colour=self.bot.default_colour)
+            elif gameend == False :
+                await message.delete()
+                successfulEmbed = discord.Embed(colour=self.bot.default_colour)
+                successfulEmbed.add_field(name="maze 迷宮",value=f"{ctx.author} 失敗了下次繼續努力",inline=False)
+                await ctx.send(embed=successfulEmbed)
+                break
+            embed = discord.Embed(title=f"maze 走迷宮\n玩家: {ctx.author}\nMode: {modestr}",description=f"```\n{game.print()}\n```",colour=self.bot.default_colour)
             await message.edit(embed = embed)
 
 
