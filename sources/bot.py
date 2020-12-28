@@ -1,4 +1,4 @@
-﻿from discord import Intents, Embed, Game
+﻿from discord import errors, Intents, Embed, Game
 from discord.ext import commands
 
 from os import listdir, system

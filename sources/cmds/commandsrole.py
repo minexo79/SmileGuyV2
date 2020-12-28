@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.utils import get
 
 import asyncio
 
@@ -22,6 +23,21 @@ class commandsrole(commands.Cog):
     def dataReload(self):
         self.rolesdata = ydata.load()
 
+    @commands.Cog.listener()
+    async def on_message(self,msg:discord.Message):
+        await msg.delete()
+        if(msg.channel.id in dict(self.rolesdata)["commandrole"].keys()):
+            _channel = self.rolesdata["commandrole"][msg.channel.id]
+            if(msg.content in _channel["command"]):
+                try:  
+                    target_role = get(msg.author.guild.roles, id=_channel["role"])
+                    await msg.author.add_roles(target_role)
+                    member = msg.author.name # user name
+                    discriminator = msg.author.discriminator # user discriminator
+                    self.bot.sm_print(1, f"[{member}#{discriminator}] input correct command [{msg.content}], add role [{target_role.name}] to it.")
+                except:
+                    self.bot.sm_print(3,"Add roles Error Found! Check your role exists or not in backend.")
+
     @commands.command(name='addcm', help="新增指令身分組 `指令` `身分組`")
     @commands.has_permissions(administrator=True,manage_roles=True)
     async def add_command_role(self, ctx:commands.Context, cmds, * , role:discord.Role):
@@ -35,6 +51,8 @@ class commandsrole(commands.Cog):
                 }
             }
             self.dataOperate(dictTopic="commandrole", setting=newData)
+            # update role data
+            self.rolesdata = ydata.load()
             # create successful embed message
             successEmbed = discord.Embed(title="成功!",description="已成功在此頻道新增關鍵字偵測",colour=self.bot.default_colour)
             successEmbed.add_field(name="使用指令", value=str(cmds).replace(',','/'), inline=False)

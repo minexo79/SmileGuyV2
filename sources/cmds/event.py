@@ -8,11 +8,15 @@ class event(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command(self,ctx:commands.Context): # 印出使用者動作
-        await ctx.message.delete()
-        member = ctx.author.name # user name
-        discriminator = ctx.author.discriminator # user discriminator
-        content = ctx.command # user commands
-        self.bot.sm_print(1,f"[{member}#{discriminator}]: issue a command: {content}")
+        try:
+            await ctx.message.delete()
+        except discord.errors.NotFound:
+            self.bot.sm_print(2,"Detect same message delete coro! ignore it.")
+        finally:
+            member = ctx.author.name # user name
+            discriminator = ctx.author.discriminator # user discriminator
+            content = ctx.command # user commands
+            self.bot.sm_print(1,f"[{member}#{discriminator}]: issue a command: {content}")
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx:commands.Context, error:commands.CommandError): # 指令錯誤

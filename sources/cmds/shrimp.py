@@ -8,7 +8,7 @@ import time,asyncio,re
 
 from datahook import yamlhook
 
-class shrimp(commands.Bot):
+class shrimp(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
