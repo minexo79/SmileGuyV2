@@ -25,8 +25,8 @@ class commandsrole(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self,msg:discord.Message):
-        await msg.delete()
         if(msg.channel.id in dict(self.rolesdata)["commandrole"].keys()):
+            await msg.delete()
             _channel = self.rolesdata["commandrole"][msg.channel.id]
             if(msg.content in _channel["command"]):
                 try:  
