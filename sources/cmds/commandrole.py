@@ -169,7 +169,7 @@ class commandrole(commands.Cog):
             await self.embedSend(ctx, successEmbed)
             # reload data
             self.dataReload()  
-            
+
         else:
             # create embed message
             notFoundEmbed = discord.Embed(title="抱歉", description="我找不到這個頻道內存在的指令喔!!",colour=self.bot.default_colour)

@@ -22,8 +22,12 @@ class info(commands.Cog):
         embed.set_footer(text=f"👾{str(self.bot.get_time)}")
         await ctx.send(embed=embed, file=file)
 
-    @commands.command(name='userinfo',help='查詢對方資訊') # capture user infomation
+    @commands.group(name='server',help='伺服器常用功能')
     @commands.has_permissions(administrator=True)
+    async def server_function(self,ctx:commands.Context):
+        pass
+
+    @server_function.command(name='userinfo',help='查詢對方資訊') # capture user infomation
     async def userinfo_cmd(self, ctx: commands.Context, member: discord.Member):
         roles = [role for role in member.roles] # count roles
         embed=discord.Embed(color=member.color)
@@ -47,8 +51,7 @@ class info(commands.Cog):
         embed.set_footer(text=f"👾 ID:{member.id}")
         await ctx.send(embed=embed)
         
-    @commands.command(name='serverinfo',help='伺服器資訊')
-    @commands.has_permissions(administrator=True)
+    @server_function.command(name='serverinfo',help='伺服器資訊')
     async def serverinfo_cmd(self, ctx: commands.Context):
         guild = ctx.guild
         embed=discord.Embed(colour=self.bot.default_colour)
@@ -63,7 +66,7 @@ class info(commands.Cog):
         embed.set_footer(text=f"👾 ID:{guild.id}")
         await ctx.send(embed=embed)
 
-    @commands.command(name='status',help='機器人狀態查詢')
+    @server_function.command(name='status',help='機器人狀態查詢')
     async def status_cmd(self,ctx: commands.Context):
         t1 = time.perf_counter()
         await ctx.trigger_typing()
