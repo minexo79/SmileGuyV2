@@ -45,7 +45,7 @@ class Bot(commands.Bot):
 
 
 ydata = yamlhook("config.yaml").load()
-bot = Bot(prefix=ydata['bot']['prefix'] + ' ')
+bot = Bot(prefix=ydata['bot']['prefix'])
 
 # Load Cog
 def loadCog():
@@ -56,10 +56,7 @@ def loadCog():
             bot.sm_print(1,f"load [{filename[:-3]}] complete.")
 
 if __name__ == "__main__":
-    # console 訊息清除 
-    # windows        : os.system("cls")
-    # linux or other : os.system("clear")
-    # 抓取 bot token
     loadCog()
     bot.sm_print(1, f"Using Prefix: {bot.prefix}")
+    # 抓取 bot token
     bot.run(ydata['bot']['token'])
