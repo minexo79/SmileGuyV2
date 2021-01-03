@@ -45,7 +45,7 @@ class Bot(commands.Bot):
 
 
 ydata = yamlhook("config.yaml").load()
-bot = Bot(prefix=ydata['bot']['prefix'])
+bot = Bot(prefix=ydata['bot']['prefix'] + ' ')
 
 # Load Cog
 def loadCog():
