@@ -38,7 +38,7 @@ class commandrole(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self,msg:discord.Message):
-        if(msg.channel.id in dict(self.rolesdata)["commandrole"].keys()):
+        if(msg.channel.id in dict(self.rolesdata["commandrole"]).keys()):
             user_permissions = msg.author.guild_permissions
             # if message sender is bot or admin   
             if(msg.author.bot == False) and (user_permissions.manage_roles == False):
@@ -57,7 +57,7 @@ class commandrole(commands.Cog):
     # command group
     # ------------------------------------------------------------------------------------------
     @commands.group(name='cm',help='指令身分組')
-    @commands.has_permissions(administrator=True,manage_roles=True)
+    @commands.has_permissions(manage_roles=True)
     async def commandroleGroup(self,ctx):
         pass
 
@@ -81,7 +81,8 @@ class commandrole(commands.Cog):
                     "role" : role.id
                 }
             }
-            self.dataOperate(dictTopic="commandrole", setting=newData)
+            self.rolesdata["commandrole"].update(newData)
+            self.dataOperate(dictTopic="commandrole", setting=self.rolesdata["commandrole"])
             # create successful embed message
             successEmbed = discord.Embed(title="成功!",description="已成功在此頻道新增指令身分組。",colour=self.bot.default_colour)
             successEmbed.add_field(name="使用指令", value=str(cmds).replace(',','/'), inline=False)
