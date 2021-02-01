@@ -6,14 +6,16 @@ import random as ra
 import requests
 import time,asyncio,re
 
-from datahook import yamlhook
+from datahook import yamlhook, mongohook
 
 class shrimp(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        
         # load yaml
         data = (yamlhook("database.yaml").load())
+        self.mongodata = mongohook(address='xopersonal.lcwcl.mongodb.net', user='xobot', password='JgPK0hmKAbslcbhd')
 
         print("-----------------------")
         print("Check Database ...")
@@ -25,6 +27,8 @@ class shrimp(commands.Cog):
         self.data = data['shrimp']
 
         self.dump_yaml = yamlhook("database.yaml").Operate
+        
+
         # check if shrimp exists
         async def shrimp_check():
             await self.bot.wait_until_ready()
@@ -63,6 +67,9 @@ class shrimp(commands.Cog):
             # self.data[guild_id]['shrimpcount'] = ra.randint(30,50)
             # self.data[guild_id]['counter'] = 0
         author_id = str(ctx.author.id)
+
+        self.mongodata.add_shrimp_player(guild_id, author_id)
+
         for i in self.data[guild_id]['user']:
             if(author_id in i.keys()):
                 await ctx.send(embed=self.shrimpEmbed(ctx,"你已經註冊囉!!"))
