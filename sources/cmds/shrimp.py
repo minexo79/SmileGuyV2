@@ -72,14 +72,16 @@ class shrimp(commands.Cog):
         self.dump_yaml(setting = self.data,dictTopic='shrimp')
         await ctx.send(embed = self.shrimpEmbed(ctx,"註冊成功!!"))
 
-    @shrimp.command(name="xp",help="查詢經驗值")
+    @shrimp.command(name="userinfo",help="查詢等級")
     async def xp(self,ctx:commands.Context):
         author_id = str(ctx.author.id)
         guild_id = str(ctx.guild.id)
         if (guild_id in list(self.data.keys())):
             for i in self.data[guild_id]['user']:
                 if(author_id in i.keys()):
-                    await ctx.send(embed = self.shrimpEmbed(ctx,f"{ctx.author.mention} 你的經驗值為: `{i[author_id]}`"))
+                    await ctx.send(embed = self.shrimpEmbed(ctx,
+                    f"玩家：{ctx.author.mention} \n \
+                    你的等級為: `{int(i[author_id]/25)} ({i[author_id]})`"))
                     return
             # couldn't find author profile
             await ctx.send(embed=self.shrimpEmbed(ctx,"你尚未註冊喔!!"))
