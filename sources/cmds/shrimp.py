@@ -72,8 +72,8 @@ class shrimp(commands.Cog):
         self.dump_yaml(setting = self.data,dictTopic='shrimp')
         await ctx.send(embed = self.shrimpEmbed(ctx,"註冊成功!!"))
 
-    @shrimp.command(name="userinfo",help="查詢等級")
-    async def xp(self,ctx:commands.Context):
+    @shrimp.command(name="level",help="查詢等級")
+    async def level(self,ctx:commands.Context):
         author_id = str(ctx.author.id)
         guild_id = str(ctx.guild.id)
         if (guild_id in list(self.data.keys())):
