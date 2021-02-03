@@ -1,5 +1,6 @@
 import yaml
 import pymongo
+import random as ra
 
 class yamlhook:
     __slots__ = ['filename']
@@ -35,10 +36,17 @@ class mongohook:
 
     def add_shrimp_player(self, guild_id, author_id) -> bool:
         pym = self.dbconnect()
+        shrimp_db = pym['smv2_shrimp']
+        shrimp_guild_col = shrimp_db[f'{guild_id}']
 
-        fish_db = pym['xobot_fish']
-
-        fish_guild_col = fish_db[f'{guild_id}']
+        x = shrimp_guild_col.find({"_id":"0"})
+        if(x.count() == 0):
+            firstdict = {
+                "_id" : "0",
+                "shrimpcount" : ra.randint(30,50),
+                "counter": 0
+            }
+            shrimp_guild_col.insert_one(firstdict)
 
         mydict = {
             "_id" : author_id,
@@ -46,7 +54,7 @@ class mongohook:
             "level": 0
         }
         try:
-            fish_guild_col.insert_one(mydict)
+            shrimp_guild_col.insert_one(mydict)
             return_val = True
         except pymongo.errors.DuplicateKeyError:
             return_val = False
@@ -57,12 +65,63 @@ class mongohook:
     def search_shrimp_player(self, guild_id, author_id) -> dict:
         pym = self.dbconnect()
 
-        fish_db = pym['xobot_fish']
+        shrimp_db = pym['smv2_shrimp']
 
-        fish_guild_col = fish_db[f'{guild_id}']
+        shrimp_guild_col = shrimp_db[f'{guild_id}']
 
-        x = fish_guild_col.find({}, {"_id" : author_id})
-        if(len(x) == 0):
+        x = shrimp_guild_col.find({"_id" : author_id})
+        
+        pym.close()
+        if(x.count() == 0):
             return None
         else:
             return x
+
+    def search_shrimp_count(self, guild_id) -> dict:
+        pym = self.dbconnect()
+
+        shrimp_db = pym['smv2_shrimp']
+
+        shrimp_guild_col = shrimp_db[f'{guild_id}']
+
+        x = shrimp_guild_col.find({"id": "0"})
+
+        pym.close()
+        if(x.count() == 0):
+            return None
+        else:
+            return x
+
+    def update_shrimp_data(self, guild_id, author_id, add_exp: float) -> bool:
+        pym = self.dbconnect()
+
+        shrimp_db = pym['smv2_shrimp']
+
+        shrimp_guild_col = shrimp_db[f'{guild_id}']
+
+        guild_data = shrimp_guild_col.find({"id": "0"})[0]
+
+        shrimp_guild_col.update_one(
+            {"_id": "0"},
+            {
+                "shrimpcount": guild_data["shrimpcount"] - 1,
+                "counter": guild_data['counter'] - 1
+            }
+        )
+
+        playerdata = shrimp_guild_col.find({"id": author_id})[0]
+
+        exp = playerdata['exp'] + add_exp
+        level = exp / 25
+
+        shrimp_guild_col.update_one(
+            {"_id": author_id},
+            {
+                "exp": exp,
+                "level": level
+            }
+        )
+
+        pym.close()
+
+        
