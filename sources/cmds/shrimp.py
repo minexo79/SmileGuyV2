@@ -6,7 +6,7 @@ import random as ra
 import requests
 import time,asyncio,re
 
-from datahook import yamlhook, mongohook
+from SmileGuyV2.sources.datahook import yamlhook, mongohook
 
 class shrimp(commands.Cog):
 
@@ -14,32 +14,28 @@ class shrimp(commands.Cog):
         self.bot = bot
         
         # load yaml
-        data = (yamlhook("database.yaml").load())
-        self.mongodata = mongohook(address='xopersonal.lcwcl.mongodb.net', user='xobot', password='JgPK0hmKAbslcbhd')
+        mongo_config = yamlhook("config.yaml").load()['mongo']
+        # data = yamlhook("database.yaml").load()
+        self.mongodata = mongohook(address = mongo_config['address'], user = mongo_config['username'], password = mongo_config['password'])
 
         print("-----------------------")
-        print("Check Database ...")
-        if (data == None) or ('shrimp' not in list(data.keys())) or (type(data['shrimp']) is not dict):
-            # initialize data
-            print("Found new Database! initializing...")
-            data['shrimp'] = {}
+        print("Try to connect with mongoDB...", end='')
 
-        self.data = data['shrimp']
-
-        self.dump_yaml = yamlhook("database.yaml").Operate
-        
+        pym_test = self.mongodata.dbconnect()
+        if(pym_test != None):
+            print(f"OK!!\nMongoDB version: {pym_test.server_info()['version']}")
+            pym_test.close()
+        else:
+            print("Failed!!")
+            self.bot.sm_print(3, f"Could't connect to MongoDB!! check your setting if it's correct!!")
 
         # check if shrimp exists
         async def shrimp_check():
             await self.bot.wait_until_ready()
             while not self.bot.is_closed():
-                # check shrimp is full or not
-                if (self.data != None):
-                    for i in list(self.data.keys()):
-                        self.data[i]['shrimpcount'] = int(self.data[i]['counter'] * 0.8) + 40
-                        self.data[i]['counter'] = 0
-                self.dump_yaml(setting=self.data,dictTopic='shrimp')
-                await asyncio.sleep(7200) # 2h
+                # reset any guild shrimp count
+                self.mongodata.reset_shrimp_count()
+                await asyncio.sleep(120) # 2h
 
         self._shrimp_check = self.bot.loop.create_task(shrimp_check())
 
@@ -53,19 +49,9 @@ class shrimp(commands.Cog):
     async def shrimp(self,ctx:commands.Context):
         pass
 
-    @shrimp.command(name="register",help="註冊釣蝦功能")
+    @shrimp.command(name="register", help="註冊釣蝦功能")
     async def register(self,ctx:commands.Context):
         guild_id = str(ctx.guild.id)
-        # if guild_id not in list(self.data.keys()):
-        #     # create server data
-        #     self.data[guild_id] = {
-        #         'user': [],
-        #         'shrimpcount': ra.randint(30,50),
-        #         'counter': 0
-        #     }
-        #     # self.data[guild_id]['user'] = []
-        #     # self.data[guild_id]['shrimpcount'] = ra.randint(30,50)
-        #     # self.data[guild_id]['counter'] = 0
         author_id = str(ctx.author.id)
 
         if(self.mongodata.add_shrimp_player(guild_id, author_id)):
@@ -73,16 +59,7 @@ class shrimp(commands.Cog):
         else:
             await ctx.send(embed = self.shrimpEmbed(ctx,"你已經註冊囉!!"))
 
-        # for i in self.data[guild_id]['user']:
-        #     if(author_id in i.keys()):
-        #         await ctx.send(embed=self.shrimpEmbed(ctx,"你已經註冊囉!!"))
-        #         return
-        # # couldn't find author profile
-        # self.data[guild_id]['user'].append({author_id : 0})
-        # self.dump_yaml(setting = self.data,dictTopic='shrimp')
-        # await ctx.send(embed = self.shrimpEmbed(ctx,"註冊成功!!"))
-
-    @shrimp.command(name="level",help="查詢等級")
+    @shrimp.command(name="level", help="查詢等級")
     async def level(self,ctx:commands.Context):
         author_id = str(ctx.author.id)
         guild_id = str(ctx.guild.id)
@@ -94,32 +71,21 @@ class shrimp(commands.Cog):
                                             你的等級為：`{x['level']} ({x['exp']})`"))
         else:
             await ctx.send(embed = self.shrimpEmbed(ctx,"你尚未註冊喔!!"))
-        # if (guild_id in list(self.data.keys())):
-        #     for i in self.data[guild_id]['user']:
-        #         if(author_id in i.keys()):
-        #             await ctx.send(embed = self.shrimpEmbed(ctx,
-        #             f"玩家：{ctx.author.mention} \n \
-        #             你的等級為: `{int(i[author_id]/25)} ({i[author_id]})`"))
-        #             return
-        #     # couldn't find author profile
-        #     await ctx.send(embed=self.shrimpEmbed(ctx,"你尚未註冊喔!!"))
-        # else:         
-        #     await ctx.send(embed=self.shrimpEmbed(ctx,"你尚未註冊喔!!"))
 
-    @shrimp.command(name="exist",help="查詢蝦池內的蝦子數量")
-    async def exist(self,ctx:commands.Context):
+    @shrimp.command(name="exist", help="查詢蝦池內的蝦子數量")
+    async def exist(self, ctx: commands.Context):
         guild_id = str(ctx.guild.id)
         x = self.mongodata.search_shrimp_count(guild_id)
         if (x != None):
             x = x[0]
             shrimps = x["shrimpcount"]
             counter = x["counter"]
-            embed = self.shrimpEmbed(ctx,f"目前蝦池有`{shrimps}`隻蝦子。\n最近有`{counter}`人曾經嘗試釣蝦過。")
+            embed = self.shrimpEmbed(ctx,f"目前蝦池有`{shrimps}`隻蝦子。\n伺服器內的玩家曾經嘗試釣蝦過`{counter}`次。")
             await ctx.send(embed = embed)
         else:         
             await ctx.send(embed = self.shrimpEmbed(ctx,"你尚未註冊喔!!"))
 
-    @commands.cooldown(5,60,commands.BucketType.guild)
+    @commands.cooldown(5,1,commands.BucketType.guild)
     @shrimp.command(name="play",help="開釣!!!")
     async def play(self,ctx:commands.Context):
         author_id = str(ctx.author.id)
@@ -141,6 +107,7 @@ class shrimp(commands.Cog):
                 y = self.mongodata.search_shrimp_count(guild_id)
                 y = y[0]
                 if (y["shrimpcount"] > 0):
+                    exp = 0
                     if (k > 3):
                         if (w <= 3):
                             exp = 0.5
@@ -170,6 +137,31 @@ class shrimp(commands.Cog):
         # couldn't find author profile
         else:         
             await ctx.send(embed = self.shrimpEmbed(ctx,"你尚未註冊喔!!"))
+
+    @shrimp.command(name='leaderboard', help='觀看前五名排行榜')
+    async def leaderboard(self, ctx: commands.Context):
+        guild_id = str(ctx.guild.id)
+        # get guild id
+        leaderboard = self.mongodata.search_shrimp_player(guild_id, p_limit=5)
+        leaderboardEmbed = self.shrimpEmbed(ctx, f"🏆️{ctx.guild.name}的釣蝦場前五名排行榜🏆️")
+
+        counter = 1
+
+        prize = ['🥇','🥈','🥉','🏅']
+        for x in leaderboard:
+            if(x['_id'] != '0'):
+
+                if(counter <= 3):
+                    prize_output = f"{prize[counter]}第{counter}名："
+                else:
+                    prize_output = f"{prize[-1]}第{counter}名："
+
+                leaderboardEmbed.add_field(name=prize_output + str(self.bot.get_user(int(x['_id']))),
+                                           value=f"經驗值：`{x['exp']}`\n等級：`{x['level']}`",
+                                           inline=False)
+                counter += 1
+
+        await ctx.send(embed=leaderboardEmbed)
 
     @play.error
     async def on_command_error(self,ctx:commands.Context,error:commands.errors):

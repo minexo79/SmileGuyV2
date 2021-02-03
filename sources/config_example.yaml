@@ -1,4 +1,8 @@
 bot:
   prefix:
-  token: 
+  token:
+mongo:
+  address:
+  username:
+  password:
 commandrole: {}

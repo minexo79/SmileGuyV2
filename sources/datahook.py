@@ -3,11 +3,10 @@ import pymongo
 import random as ra
 
 class yamlhook:
+
     __slots__ = ['filename']
     def __init__(self,filename):
         self.filename = filename
-
-    # load : 純讀取
 
     def load(self):    
         with open(self.filename,'r',encoding="utf8") as yd:
@@ -24,6 +23,14 @@ class yamlhook:
             yaml.safe_dump(data,yd)
 
 class mongohook:
+
+    @property
+    def guild_config(self) -> dict:
+        return {"_id": "0"}
+
+    def user_config(self, uid: str) -> dict:
+        return {"_id": uid}
+
     __slots__ = ['address', 'user', 'password']
     def __init__(self, address, user, password):
         self.address = address
@@ -62,14 +69,17 @@ class mongohook:
             pym.close()
             return return_val
 
-    def search_shrimp_player(self, guild_id, author_id) -> dict:
+    def search_shrimp_player(self, guild_id, author_id:str = "", p_limit:int = 5) -> dict:
         pym = self.dbconnect()
 
         shrimp_db = pym['smv2_shrimp']
 
         shrimp_guild_col = shrimp_db[f'{guild_id}']
 
-        x = shrimp_guild_col.find({"_id" : author_id})
+        if(author_id == ""):
+            x = shrimp_guild_col.find().sort("exp", -1).limit(p_limit)
+        else:
+            x = shrimp_guild_col.find(self.user_config(author_id))
         
         pym.close()
         if(x.count() == 0):
@@ -84,7 +94,7 @@ class mongohook:
 
         shrimp_guild_col = shrimp_db[f'{guild_id}']
 
-        x = shrimp_guild_col.find({"id": "0"})
+        x = shrimp_guild_col.find(self.guild_config)
 
         pym.close()
         if(x.count() == 0):
@@ -93,35 +103,63 @@ class mongohook:
             return x
 
     def update_shrimp_data(self, guild_id, author_id, add_exp: float) -> bool:
-        pym = self.dbconnect()
+        try:
+            pym = self.dbconnect()
 
+            shrimp_db = pym['smv2_shrimp']
+
+            shrimp_guild_col = shrimp_db[f'{guild_id}']
+
+            guild_data = shrimp_guild_col.find(self.guild_config)[0]
+
+            if(add_exp > 0):
+                after_shrimp = guild_data["shrimpcount"] - 1
+            else:
+                after_shrimp = guild_data["shrimpcount"]
+
+            shrimp_guild_col.update_one(
+                self.guild_config,
+                {
+                    "$set": {
+                        "shrimpcount": after_shrimp,
+                        "counter": guild_data['counter'] + 1
+                    }
+                }
+            )
+
+            if(add_exp > 0):
+                playerdata = shrimp_guild_col.find(self.user_config(author_id))[0]
+
+                exp = playerdata['exp'] + add_exp
+                level = int(exp / 25)
+
+                shrimp_guild_col.update_one(
+                    self.user_config(author_id),
+                    {
+                        "$set": {
+                            "exp": exp,
+                            "level": level
+                        }
+                    }
+                )
+            pym.close()
+            return True
+        except:
+            return False
+
+    def reset_shrimp_count(self):
+        pym = self.dbconnect()
         shrimp_db = pym['smv2_shrimp']
 
-        shrimp_guild_col = shrimp_db[f'{guild_id}']
-
-        guild_data = shrimp_guild_col.find({"id": "0"})[0]
-
-        shrimp_guild_col.update_one(
-            {"_id": "0"},
-            {
-                "shrimpcount": guild_data["shrimpcount"] - 1,
-                "counter": guild_data['counter'] - 1
-            }
-        )
-
-        playerdata = shrimp_guild_col.find({"id": author_id})[0]
-
-        exp = playerdata['exp'] + add_exp
-        level = exp / 25
-
-        shrimp_guild_col.update_one(
-            {"_id": author_id},
-            {
-                "exp": exp,
-                "level": level
-            }
-        )
+        for x in shrimp_db.list_collection_names():
+            shrimp_db[x].update_one(
+                self.guild_config,
+                {
+                    "$set": {
+                        "shrimpcount": ra.randint(30,50),
+                        "counter": 0
+                    }
+                }
+            )
 
         pym.close()
-
-        
