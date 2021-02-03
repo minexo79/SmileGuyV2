@@ -1,8 +1,5 @@
 bot:
   prefix:
-<<<<<<< HEAD
-  token: 
-commandrole: {}
-=======
   token:
->>>>>>> 78b5c7188a140a776983f0d9fd7d90b1a5ba0f82
+
+commandrole: {}
