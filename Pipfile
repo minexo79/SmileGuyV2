@@ -7,9 +7,8 @@ name = "pypi"
 "discord.py" = "*"
 requests = "*"
 psutil = "*"
-PyYAML = "*"
 pylint = "*"
-pymongo = {extras = ["srv"], version = "*"}
+PyYAML = "*"
 
 [dev-packages]
 

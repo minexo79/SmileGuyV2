@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import time,os,psutil
 
+from ..datahook import yamlhook
+
 class info(commands.Cog):
 
     def __init__(self,bot:commands.Bot):
@@ -9,7 +11,7 @@ class info(commands.Cog):
 
     @commands.command(name='about',help='關於機器人')
     async def about_cmd(self,ctx: commands.Context):
-        file = discord.File(".//img/logo.png",filename="logo.png")
+        file = discord.File(".//img/logo.png", filename="logo.png")
         # get locale file
         embed=discord.Embed(title="SmileGuy About Me",color=self.bot.default_colour)
         embed.set_thumbnail(url="attachment://logo.png")
@@ -18,6 +20,7 @@ class info(commands.Cog):
         embed.add_field(name="作者/Author",value="iblackcat, Xiao Xigua, 惡魔柴柴, 檸檬王, tommy2131",inline=False)
         embed.add_field(name="簡介",value="哈囉！我是微笑小子。謝謝你加我到伺服器 >O<",inline=False)
         embed.add_field(name="原始碼/Source",value="https://github.com/minexo79/SmileGuyV2",inline=False)
+        embed.add_field(name="運行主機/Machine",value="Azure",inline=False)
         embed.add_field(name="邀請連結/Invite Link",value="https://reurl.cc/R4NQOz",inline=False)
         embed.set_footer(text=f"👾{str(self.bot.get_time)}")
         await ctx.send(embed=embed, file=file)

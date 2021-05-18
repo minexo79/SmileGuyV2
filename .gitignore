@@ -1,9 +1,0 @@
-sources/config.yaml
-sources/database.yaml
-
-sources/__pycache__/
-sources/cmds/__pycache__/
-sources/cmds/game/__pycache__/
-
-Pipfile
-Pipfile.lock
