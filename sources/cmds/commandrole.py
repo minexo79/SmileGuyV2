@@ -4,7 +4,7 @@ from discord.utils import get
 
 import asyncio
 
-from datahook import yamlhook
+from ..datahook import yamlhook
 
 ydata = yamlhook("config.yaml")
 
@@ -15,7 +15,7 @@ class commandrole(commands.Cog):
         self.rolesdata = ydata.load()
         self.dataOperate = ydata.Operate
 
-        if("commandrole" not in dict(self.rolesdata).keys()):
+        if "commandrole" not in dict(self.rolesdata).keys():
             self.dataOperate(dictTopic="commandrole", setting={})
             # upload rolesdata
             self.rolesdata = ydata.load()
@@ -38,21 +38,24 @@ class commandrole(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self,msg:discord.Message):
-        if(msg.channel.id in dict(self.rolesdata["commandrole"]).keys()):
-            user_permissions = msg.author.guild_permissions
-            # if message sender is bot or admin   
-            if(msg.author.bot == False) and (user_permissions.manage_roles == False):
-                await msg.delete()
-            _channel = self.rolesdata["commandrole"][msg.channel.id]
-            if(msg.content in _channel["command"]):
-                try:  
-                    target_role = get(msg.author.guild.roles, id=_channel["role"])
-                    await msg.author.add_roles(target_role)
-                    member = msg.author.name # user name
-                    discriminator = msg.author.discriminator # user discriminator
-                    self.bot.sm_print(1, f"[{member}#{discriminator}] input correct command [{msg.content}], add role [{target_role.name}] to it.")
-                except:
-                    self.bot.sm_print(3,"Add roles Error Found! Check your role has exists or not in backend.")  
+        try:
+            if msg.channel.id in dict(self.rolesdata["commandrole"]).keys():
+                user_permissions = msg.author.guild_permissions
+                # if message sender is bot or admin
+                if(msg.author.bot == False) and (user_permissions.manage_roles == False):
+                    await msg.delete()
+                _channel = self.rolesdata["commandrole"][msg.channel.id]
+                if msg.content in _channel["command"]:
+                    try:
+                        target_role = get(msg.author.guild.roles, id=_channel["role"])
+                        await msg.author.add_roles(target_role)
+                        member = msg.author.name # user name
+                        discriminator = msg.author.discriminator # user discriminator
+                        self.bot.sm_print(1, f"[{member}#{discriminator}] input correct command [{msg.content}], add role [{target_role.name}] to it.")
+                    except:
+                        self.bot.sm_print(3,"Add roles Error Found! Check your role has exists or not in backend.")
+        except TypeError as e:
+            pass
 
     # command group
     # ------------------------------------------------------------------------------------------

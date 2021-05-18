@@ -1,8 +1,9 @@
+import os
+import psutil
+import time
+
 import discord
 from discord.ext import commands
-import time,os,psutil
-
-from ..datahook import yamlhook
 
 class info(commands.Cog):
 
@@ -13,16 +14,26 @@ class info(commands.Cog):
     async def about_cmd(self,ctx: commands.Context):
         file = discord.File(".//img/logo.png", filename="logo.png")
         # get locale file
-        embed=discord.Embed(title="SmileGuy About Me",color=self.bot.default_colour)
-        embed.set_thumbnail(url="attachment://logo.png")
+        embed = discord.Embed(title="SmileGuy About Me",color=self.bot.default_colour)
         # bot image
-        embed.add_field(name="版本/Version",value="1.6",inline=False)
-        embed.add_field(name="作者/Author",value="iblackcat, Xiao Xigua, 惡魔柴柴, 檸檬王, tommy2131",inline=False)
-        embed.add_field(name="簡介",value="哈囉！我是微笑小子。謝謝你加我到伺服器 >O<",inline=False)
-        embed.add_field(name="原始碼/Source",value="https://github.com/minexo79/SmileGuyV2",inline=False)
-        embed.add_field(name="運行主機/Machine",value="Azure",inline=False)
-        embed.add_field(name="邀請連結/Invite Link",value="https://reurl.cc/R4NQOz",inline=False)
-        embed.set_footer(text=f"👾{str(self.bot.get_time)}")
+        embed.set_thumbnail(url="attachment://logo.png")
+        embed.add_field(name="版本/Version",
+                        value=self.bot.currentVersion,
+                        inline=False)
+        embed.add_field(name="作者/Author",
+                        value="iblackcat, Xiao Xigua, 惡魔柴柴, 檸檬王, tommy2131",
+                        inline=False)
+        embed.add_field(name="簡介",
+                        value="哈囉！我是微笑小子。謝謝你加我到伺服器 >O<",
+                        inline=False)
+        embed.add_field(name="原始碼/Source",
+                        value="https://github.com/minexo79/SmileGuyV2",
+                        inline=False)
+        embed.add_field(name="邀請連結/Invite Link",
+                        value="https://reurl.cc/R4NQOz",
+                        inline=False)
+
+        embed.set_footer(text=f"👾{str(self.bot.currentTime)}")
         await ctx.send(embed=embed, file=file)
 
     @commands.group(name='server',help='伺服器常用功能')
@@ -30,27 +41,40 @@ class info(commands.Cog):
     async def server_function(self,ctx:commands.Context):
         pass
 
-    @server_function.command(name='userinfo',help='查詢對方資訊') # capture user infomation
+    @server_function.command(name='userinfo', help='查詢對方資訊')    # capture user infomation
     async def userinfo_cmd(self, ctx: commands.Context, member: discord.Member):
         roles = [role for role in member.roles] # count roles
         embed=discord.Embed(color=member.color)
         embed.set_thumbnail(url=member.avatar_url) # user image
-        embed.add_field(name="對方名稱",value=member,inline=True) # display user name
-        embed.add_field(name="對方暱稱",value=member.display_name,inline=True) # display user nickname in guild
-        embed.add_field(name="創建日期",value=member.created_at.strftime("%Y.%m.%d-%H:%M:%S (UTC)"),inline=False)
-        # display create user date
-        embed.add_field(name="加入日期",value=member.joined_at.strftime("%Y.%m.%d-%H:%M:%S (UTC)"),inline=False)
-        # display user join date
-        if member.is_on_mobile() == True:
+        embed.add_field(name="對方名稱",
+                        value=member,
+                        inline=True)    # display user name
+        embed.add_field(name="對方暱稱",
+                        value=member.display_name,
+                        inline=True)    # display user nickname in guild
+        embed.add_field(name="創建日期",
+                        value=member.created_at.strftime("%Y.%m.%d-%H:%M:%S (UTC)"),
+                        inline=False)   # display user created date
+        embed.add_field(name="加入日期",
+                        value=member.joined_at.strftime("%Y.%m.%d-%H:%M:%S (UTC)"),
+                        inline=False)   # display user joined date
+        if member.is_on_mobile() is True:
             # if user mobile is online
-            embed.add_field(name="對方狀態",value="Moblie Online",inline=True)
+            embed.add_field(name="對方狀態",
+                            value="Moblie Online",
+                            inline=True)
         else:
             # otherwise
-            embed.add_field(name="對方狀態",value=member.status,inline=True)
-        embed.add_field(name="機器人",value=member.bot,inline=True)
-        # display user is bot or not
-        embed.add_field(name=f"身分組：{len(roles)}",value=" ".join([role.mention for role in roles]),inline=False)
-        # display roles
+            embed.add_field(name="對方狀態",
+                            value=member.status,
+                            inline=True)
+
+        embed.add_field(name="機器人",
+                        value=member.bot,
+                        inline=True)    # display user is bot or not
+        embed.add_field(name=f"身分組：{len(roles)}",
+                        value=" ".join([role.mention for role in roles]),
+                        inline=False) # display roles
         embed.set_footer(text=f"👾 ID:{member.id}")
         await ctx.send(embed=embed)
         
@@ -82,7 +106,7 @@ class info(commands.Cog):
         embed.add_field(name="Used Ram",value=f"```{round(process/1000000)} MB ({percent}%)```",inline=False)
         embed.add_field(name="Bot Ping",value=f"```{round(self.bot.latency*1000)} ms```",inline=True)
         embed.add_field(name="Sys Ping",value=f"```{round((t2-t1)*1000)} ms```",inline=True)
-        embed.set_footer(text=f"👾{str(self.bot.get_time)}")
+        embed.set_footer(text=f"👾{str(self.bot.currentTime)}")
         await ctx.send(embed=embed)
 
     @commands.command(name='help',help='指令幫助')
@@ -90,7 +114,7 @@ class info(commands.Cog):
         helpCommand = []
         helptext = []
         groupCommand = {}
-        if groupName != None:
+        if groupName is not None:
             for command in self.bot.commands:
                 # find group commands
                 if command.name == groupName:
@@ -101,7 +125,7 @@ class info(commands.Cog):
                     for i in range(len(helpCommand)):
                         # get group commands help
                         # command help is empty
-                        if groupCommand[helpCommand[i]].help == None:
+                        if groupCommand[helpCommand[i]].help is None:
                             helptext.append("這主人很懶，沒有留下任何訊息!")
                         else:
                             helptext.append(groupCommand[helpCommand[i]].help)
@@ -110,20 +134,20 @@ class info(commands.Cog):
             for command in self.bot.commands:
                 helpCommand.append(command.name)
                 # command help is empty
-                if command.help == None:
+                if command.help is None:
                     helptext.append("這主人很懶，沒有留下任何訊息!")
                 else:
                     helptext.append(command.help)
         # embed
         helpDisplay = discord.Embed(title="SmileGuy Commands Help",color=self.bot.default_colour)
         for i in range(len(helpCommand)):
-            if groupName == None: 
+            if groupName is None:
                 # groupName = ""
                 helpDisplay.add_field(name=f"{ctx.prefix}{helpCommand[i]}",value=helptext[i],inline=False)     
             else:
                 helpDisplay.add_field(name=f"{ctx.prefix}{groupName} {helpCommand[i]}",value=helptext[i],inline=False)   
         helpDisplay.add_field(name="About",value=f"My prefix is `{ctx.prefix}` | Use `{ctx.prefix}help` to see all commands.",inline=False)
-        helpDisplay.set_footer(text=f"👾{str(self.bot.get_time)}")
+        helpDisplay.set_footer(text=f"👾{str(self.bot.currentTime)}")
         await ctx.send(embed = helpDisplay)
 
 def setup(bot):
