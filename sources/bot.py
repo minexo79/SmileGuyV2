@@ -6,6 +6,11 @@ from datetime import datetime
 
 from datahook import yamlhook
 
+# TODO 多機架構
+# TODO MongoDB儲存
+# TODO 遊戲: 幾A幾B
+# TODO 自動化 Banner
+# TODO 自動化 Voice Channel
 
 class Bot(commands.Bot):
     def __init__(self,
