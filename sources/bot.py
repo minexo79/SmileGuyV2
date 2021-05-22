@@ -4,13 +4,14 @@ from discord.ext import commands
 from os import listdir, system
 from datetime import datetime
 
-from datahook import yamlhook
+from datahook import confighook
 
-# TODO 多機架構
-# TODO MongoDB儲存
-# TODO 遊戲: 幾A幾B
-# TODO 自動化 Banner
-# TODO 自動化 Voice Channel
+# TODO [] 多機架構
+# TODO [] MongoDB / SQL 儲存
+# TODO [] 遊戲: 幾A幾B
+# TODO [] 自動化 Banner
+# TODO [] 自動化 Voice Channel
+
 
 class Bot(commands.Bot):
     def __init__(self,
@@ -58,10 +59,13 @@ class Bot(commands.Bot):
         # print to console
         self.sm_print(3, f"[{member}#{discriminator}]: {error}")
 
-# 抓取yaml config
-ydata = yamlhook("config.yaml").load()
-bot = Bot(prefix=ydata['bot']['prefix'],
-          version=ydata['bot']['version'])
+
+# get config from ini
+bot_config = confighook(filename='config.ini')
+
+bot = Bot(prefix=bot_config.botPrefix,
+          version=bot_config.botVersion)
+
 
 # Load Cog
 def loadCog():
@@ -70,7 +74,7 @@ def loadCog():
         if filename.endswith('.py'):
             try:
                 bot.load_extension(f'cmds.{filename[:-3]}')
-                bot.sm_print(1,f"load [{filename[:-3]}] complete.")
+                bot.sm_print(1, f"load [{filename[:-3]}] complete.")
             except Exception as e:
                 pass
     bot.sm_print(1, "All extensions are loaded.")
@@ -81,4 +85,4 @@ if __name__ == "__main__":
     bot.sm_print(1, f"Using Prefix: {bot.prefix}")
     # 抓取 bot token
     # 運行
-    bot.run(ydata['bot']['token'], bot=True)
+    bot.run(bot_config.botToken, bot=True)

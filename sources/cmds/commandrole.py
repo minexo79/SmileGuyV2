@@ -6,7 +6,7 @@ import asyncio
 
 from ..datahook import yamlhook
 
-ydata = yamlhook("config.yaml")
+ydata = yamlhook("database.yaml")
 
 class commandrole(commands.Cog):
 
