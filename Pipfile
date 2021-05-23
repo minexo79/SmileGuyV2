@@ -9,6 +9,7 @@ requests = "*"
 psutil = "*"
 pylint = "*"
 PyYAML = "*"
+pymongo = {extras = ["srv"], version = "*"}
 
 [dev-packages]
 

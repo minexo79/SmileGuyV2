@@ -42,8 +42,11 @@ class commandrole(commands.Cog):
             if msg.channel.id in dict(self.rolesdata["commandrole"]).keys():
                 user_permissions = msg.author.guild_permissions
                 # if message sender is bot or admin
-                if(msg.author.bot == False) and (user_permissions.manage_roles == False):
-                    await msg.delete()
+                if(msg.author.bot is False) and (user_permissions.manage_roles == False):
+                    try:
+                        await msg.delete()
+                    except Exception as e:
+                        pass
                 _channel = self.rolesdata["commandrole"][msg.channel.id]
                 if msg.content in _channel["command"]:
                     try:
@@ -52,7 +55,7 @@ class commandrole(commands.Cog):
                         member = msg.author.name # user name
                         discriminator = msg.author.discriminator # user discriminator
                         self.bot.sm_print(1, f"[{member}#{discriminator}] input correct command [{msg.content}], add role [{target_role.name}] to it.")
-                    except:
+                    except Exception as e:
                         self.bot.sm_print(3,"Add roles Error Found! Check your role has exists or not in backend.")
         except TypeError as e:
             pass
